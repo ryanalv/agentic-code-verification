@@ -8,8 +8,10 @@ import json
 import os
 import sys
 
-# Garante que src está no path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Garante que a raiz do projeto está no path para que 'import src.xxx' funcione
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
 
 from src.code_analyst import analyze_codebase
 from src.agents.critic import CriticAgent
@@ -18,7 +20,9 @@ from src.config import settings
 app = FastAPI()
 
 # Monta arquivos estáticos
-app.mount("/static", StaticFiles(directory="src/web/static"), name="static")
+# Monta arquivos estáticos com caminho absoluto
+STATIC_DIR = os.path.join(PROJECT_ROOT, "src", "web", "static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -39,7 +43,15 @@ async def run_analysis_generator():
     
     yield f"data: {json.dumps({'type': 'log', 'message': f'Iniciando análise em: {project_path}'})}\n\n"
     
-    critic = CriticAgent()
+    critic = None
+    if not USE_MOCK:
+        try:
+            critic = CriticAgent()
+            yield f"data: {json.dumps({'type': 'log', 'message': 'Agente Crítico inicializado.'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': f'Erro ao inicializar Crítico: {e}'})}\n\n"
+            yield f"data: {json.dumps({'type': 'warning', 'message': 'Continuando em modo Mock devido a erro na API.'})}\n\n"
+    
     current_feedback = None
     max_retries = 2
     
@@ -80,7 +92,7 @@ async def run_analysis_generator():
         # 2. Executar Crítico
         yield f"data: {json.dumps({'type': 'status', 'message': f'Iteração {i+1}: Executando Agente Crítico...'})}\n\n"
         
-        if USE_MOCK:
+        if USE_MOCK or critic is None:
             await asyncio.sleep(1)
             if i == 0:
                  review = {"approved": False, "score": 5, "feedback": "Arquivo inexistente citado.", "hallucinations": ["src/ghost_file.py"]}
@@ -106,7 +118,8 @@ async def run_analysis_generator():
 
 @app.get("/")
 async def get_index():
-    with open("src/web/templates/index.html", "r", encoding="utf-8") as f:
+    template_path = os.path.join(PROJECT_ROOT, "src", "web", "templates", "index.html")
+    with open(template_path, "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
 
 @app.get("/stream_analysis")
@@ -114,4 +127,4 @@ async def stream_analysis():
     return StreamingResponse(run_analysis_generator(), media_type="text/event-stream")
 
 if __name__ == "__main__":
-    uvicorn.run("src.server:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("src.server:app", host="127.0.0.1", port=8000, reload=True)
