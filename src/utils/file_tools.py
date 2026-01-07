@@ -17,7 +17,7 @@ def read_project_files(directory_path: str) -> str:
     ignore_extensions = {'.pyc', '.pyo', '.pyd', '.so', '.dll', '.exe', '.bin', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.zip', '.tar', '.gz'}
 
     for root, dirs, files in os.walk(directory_path):
-        # Filter directories in-place
+        # Filtra diretórios no local
         dirs[:] = [d for d in dirs if d not in ignore_dirs]
         
         for file in files:
@@ -34,7 +34,7 @@ def read_project_files(directory_path: str) -> str:
                     # Skip empty files or very large files (simple heuristic)
                     if not content.strip():
                         continue
-                    if len(content) > 100000: # Skip huge files > 100KB to save context
+                    if len(content) > 100000: # Pula arquivos enormes > 100KB para economizar contexto
                         content = content[:2000] + "\n... [File truncated due to size] ..."
                         
                     all_content.append(f"--- File: {rel_path} ---\n{content}\n")

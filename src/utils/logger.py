@@ -8,7 +8,7 @@ def setup_logger(name: str = "ai_docs_agent"):
     if not logger.handlers:
         logger.setLevel(settings.LOG_LEVEL)
         
-        # Console Handler
+        # Handler de Console
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(settings.LOG_LEVEL)
         formatter = logging.Formatter(
@@ -18,7 +18,7 @@ def setup_logger(name: str = "ai_docs_agent"):
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
         
-        # File Handler (Optional, good for debugging)
+        # File Handler (Opcional, bom para debug)
         file_handler = logging.FileHandler(os.path.join(settings.DATA_DIR, "app.log"), encoding="utf-8")
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
@@ -27,5 +27,5 @@ def setup_logger(name: str = "ai_docs_agent"):
     return logger
 
 import os
-# Initialize default logger
+# Inicializa logger padrão
 logger = setup_logger()

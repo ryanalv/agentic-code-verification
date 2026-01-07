@@ -8,7 +8,7 @@ import json
 import os
 import sys
 
-# Ensure src is in path
+# Garante que src está no path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from src.code_analyst import analyze_codebase
@@ -17,7 +17,7 @@ from src.config import settings
 
 app = FastAPI()
 
-# Mount static files
+# Monta arquivos estáticos
 app.mount("/static", StaticFiles(directory="src/web/static"), name="static")
 
 app.add_middleware(
@@ -27,14 +27,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mock / Real mode
+# Modo Mock / Real
 USE_MOCK = os.getenv("OPENROUTER_API_KEY") is None
 
 async def run_analysis_generator():
     """
     Generator that runs the analysis loop and yields SSE events.
     """
-    project_path = os.path.join(os.getcwd(), "src") # Analyze itself
+    project_path = os.path.join(os.getcwd(), "src")    # Analisa a si mesmo
     project_name = "AI Quality Critic Agent"
     
     yield f"data: {json.dumps({'type': 'log', 'message': f'Iniciando análise em: {project_path}'})}\n\n"
@@ -47,11 +47,11 @@ async def run_analysis_generator():
         yield f"data: {json.dumps({'type': 'status', 'message': f'Iteração {i+1}: Executando Analista de Código...'})}\n\n"
         yield f"data: {json.dumps({'type': 'log', 'message': 'Analista está lendo arquivos e gerando documentação...'})}\n\n"
         
-        # 1. Run Analyst
+        # 1. Executar Analista
         analyst_start = asyncio.get_event_loop().time()
         
         if USE_MOCK:
-             # Mock delay
+             # Atraso mock
             await asyncio.sleep(2)
             if i == 0:
                 doc_text = "Documentação v1 (com erro)\nReferência: `src/ghost_file.py`\nQualidade baixa."
@@ -61,8 +61,8 @@ async def run_analysis_generator():
                 steps = 6
             usage = {"total_tokens": 500}
         else:
-             # Real execution
-             # Note: This is blocking, in a real app should be in a threadpool
+             # Execução real
+             # Nota: Isto é bloqueante, em uma aplicação real deveria estar em um threadpool
              loop = asyncio.get_event_loop()
              try:
                 result = await loop.run_in_executor(None, analyze_codebase, project_path, project_name, current_feedback)
@@ -77,7 +77,7 @@ async def run_analysis_generator():
         yield f"data: {json.dumps({'type': 'log', 'message': f'Analista finalizou em {steps} passos. Tokens estimados: {tokens}'})}\n\n"
         yield f"data: {json.dumps({'type': 'doc_preview', 'content': doc_text[:500] + '...'})}\n\n"
         
-        # 2. Run Critic
+        # 2. Executar Crítico
         yield f"data: {json.dumps({'type': 'status', 'message': f'Iteração {i+1}: Executando Agente Crítico...'})}\n\n"
         
         if USE_MOCK:

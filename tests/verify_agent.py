@@ -3,7 +3,7 @@ import sys
 import time
 import pandas as pd
 
-# Add src to path
+# Adiciona src ao path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 src_path = os.path.join(current_dir, '..')
 sys.path.append(src_path)
@@ -11,11 +11,11 @@ sys.path.append(src_path)
 from src.code_analyst import analyze_codebase
 from src.agents.critic import CriticAgent
 
-# Project Path (The project itself)
+# Caminho do Projeto (O próprio projeto)
 PROJECT_PATH = os.path.join(src_path, "src")
 PROJECT_NAME = "AI Quality Critic Agent"
 
-    # Mock Critic para testes quando API key está faltando
+# Crítico Mock para testes quando a chave de API está faltando
 class MockCritic:
     def review(self, text, path):
          return {} # Será sobrescrito no loop manualmente ou podemos colocar lógica aqui
@@ -36,7 +36,7 @@ def run_analysis_loop(max_retries=2):
     
     print(f"Iniciando Análise em {PROJECT_PATH}...")
     
-    # MOCK BEHAVIOR for Demonstration/Testing without API Key
+    # COMPORTAMENTO MOCK para Demonstração/Teste sem chave de API
     use_mock = os.getenv("OPENROUTER_API_KEY") is None
     if use_mock:
         print("AVISO: API Key não encontrada. Usando respostas MOCKADAS para lógica de verificação.")

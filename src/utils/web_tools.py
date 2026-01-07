@@ -24,20 +24,20 @@ def scrape_page(url: str) -> str:
         
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Remove script and style elements
+        # Remove elementos script e style
         for script in soup(["script", "style", "nav", "footer"]):
             script.decompose()
             
         text = soup.get_text()
         
-        # Break into lines and remove leading and trailing space on each
+        # Quebra em linhas e remove espaços iniciais e finais em cada uma
         lines = (line.strip() for line in text.splitlines())
-        # Break multi-headlines into a line each
+        # Quebra multi-cabeçalhos em uma linha cada
         chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-        # Drop blank lines
+        # Descarta linhas em branco
         text = '\n'.join(chunk for chunk in chunks if chunk)
         
-        # Limit length to avoid context window issues (simple truncation)
+        # Limita o comprimento para evitar problemas de janela de contexto (truncamento simples)
         return text[:5000] + "... (truncated)" if len(text) > 5000 else text
     except Exception as e:
         return f"Error scraping {url}: {str(e)}"

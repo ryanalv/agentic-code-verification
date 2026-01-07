@@ -20,7 +20,7 @@ class ReActAgent:
         )
         self.model_name = model_name
         self.tools = tools or {}
-        self.max_steps = 15  # Increased steps for complex tasks
+        self.max_steps = 15  # Aumentados os passos para tarefas complexas
         
     def _build_system_prompt(self, goal: str) -> str:
         tool_descriptions = "\n".join([f"- {name}: {func.__doc__}" for name, func in self.tools.items()])
