@@ -56,12 +56,12 @@ Regras:
 """
 
     def _parse_json_response(self, response: str) -> Dict[str, Any]:
-        """Attempts to parse the LLM response as JSON."""
+        """Tenta analisar a resposta do LLM como JSON."""
         try:
-            # Try direct parse
+            # Tenta análise direta
             return json.loads(response)
         except json.JSONDecodeError:
-            # Try to find JSON block ```json ... ```
+            # Tenta encontrar bloco JSON ```json ... ```
             match = re.search(r"```json\s*(.*?)\s*```", response, re.DOTALL)
             if match:
                 try:
@@ -69,7 +69,7 @@ Regras:
                 except:
                     pass
             
-            # Try to find just { ... }
+            # Tenta encontrar apenas { ... }
             match = re.search(r"\{.*\}", response, re.DOTALL)
             if match:
                 try:
@@ -79,42 +79,46 @@ Regras:
             
             return None
 
-    def run(self, goal: str, on_step_callback: Callable[[int, str], None] = None) -> str:
+    def run(self, goal: str, on_step_callback: Callable[[int, str], None] = None) -> Dict[str, Any]:
         system_prompt = self._build_system_prompt(goal)
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": "Start."}
         ]
         
-        logger.info(f"Starting ReAct Agent for goal: {goal[:50]}...")
+        logger.info(f"Iniciando Agente ReAct para objetivo: {goal[:50]}...")
         if on_step_callback:
             on_step_callback(0, "Iniciando análise...")
         
         for i in range(self.max_steps):
-            # Generate next step
+            # Gera próximo passo
             if on_step_callback:
                 on_step_callback(i+1, "Pensando...")
             try:
                 response = self.client.chat.completions.create(
                     model=self.model_name,
                     messages=messages,
-                    response_format={"type": "json_object"} # Force JSON mode if supported
+                    response_format={"type": "json_object"} # Força modo JSON se suportado
                 )
                 output = response.choices[0].message.content.strip()
             except Exception as e:
-                logger.error(f"Error calling LLM: {e}")
-                return f"Erro ao chamar LLM: {e}"
+                logger.error(f"Erro ao chamar LLM: {e}")
+                return {
+                    "final_answer": f"Erro ao chamar LLM: {e}",
+                    "steps": i,
+                    "usage": {"total_tokens": 0}
+                }
             
-            logger.debug(f"Step {i+1} Output: {output}")
+            logger.debug(f"Passo {i+1} Saída: {output}")
             
-            # Append to history
+            # Anexa ao histórico
             messages.append({"role": "assistant", "content": output})
             
             # Parse JSON
             parsed_output = self._parse_json_response(output)
             
             if not parsed_output:
-                logger.warning(f"Step {i+1}: Invalid JSON received.")
+                logger.warning(f"Passo {i+1}: JSON inválido recebido.")
                 messages.append({"role": "user", "content": "Error: Invalid JSON format. Please output ONLY valid JSON matching the schema."})
                 continue
 
@@ -124,36 +128,57 @@ Regras:
             action_input = parsed_output.get("action_input")
             
             if on_step_callback and thought:
-                # Show thought in progress (truncated)
+                # Mostra o pensamento em progresso (truncado)
                 on_step_callback(i+1, f"Pensamento: {thought[:100]}...")
 
-            # Check for Final Answer
+            # Verifica Resposta Final
             if final_answer:
-                logger.info("Agent reached final answer.")
-                return final_answer
+                logger.info("Agente alcançou a resposta final.")
+                usage_obj = getattr(response, 'usage', None)
+                usage_dict = {"total_tokens": 0}
+                if usage_obj:
+                    # Verifica se é um objeto pydantic ou dict
+                    if hasattr(usage_obj, "model_dump"):
+                        usage_dict = usage_obj.model_dump()
+                    elif hasattr(usage_obj, "dict"):
+                        usage_dict = usage_obj.dict()
+                    elif isinstance(usage_obj, dict):
+                         usage_dict = usage_obj
+                    elif hasattr(usage_obj, "total_tokens"):
+                        usage_dict = {"total_tokens": usage_obj.total_tokens}
+                
+                return {
+                    "final_answer": final_answer,
+                    "steps": i + 1,
+                    "usage": usage_dict
+                }
             
-            # Execute Action
+            # Executa Ação
             if action:
                 if action in self.tools:
                     if on_step_callback:
                         on_step_callback(i+1, f"Executando {action}...")
                     
-                    logger.info(f"Executing tool: {action} with input: {action_input}")
+                    logger.info(f"Executando ferramenta: {action} com entrada: {action_input}")
                     try:
                         observation = self.tools[action](action_input)
                     except Exception as e:
-                        logger.error(f"Tool execution error: {e}")
-                        observation = f"Error executing tool: {e}"
+                        logger.error(f"Erro na execução da ferramenta: {e}")
+                        observation = f"Erro executando ferramenta: {e}"
                 else:
-                    observation = f"Error: Tool '{action}' not found."
+                    observation = f"Erro: Ferramenta '{action}' não encontrada."
                 
-                logger.debug(f"Observation: {str(observation)[:200]}...")
+                logger.debug(f"Observação: {str(observation)[:200]}...")
                 
-                # Feed observation back
+                # Devolve observação
                 observation_json = json.dumps({"observation": observation})
                 messages.append({"role": "user", "content": observation_json})
             else:
-                # No action and no final answer?
-                messages.append({"role": "user", "content": "Error: You must provide either an 'action' or a 'final_answer'."})
+                # Sem ação e sem resposta final?
+                messages.append({"role": "user", "content": "Erro: Você deve fornecer 'action' ou 'final_answer'."})
 
-        return "Agente excedeu o tempo limite ou falhou em chegar a uma conclusão."
+        return {
+            "final_answer": "Agente excedeu o tempo limite ou falhou em chegar a uma conclusão.",
+            "steps": self.max_steps,
+            "usage": {"total_tokens": 0} # Placeholder/Estimativa
+        }

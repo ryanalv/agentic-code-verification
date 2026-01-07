@@ -1,0 +1,66 @@
+2026-01-06 19:04:54 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 19:06:08 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification\ai-quality-critic-agent/src
+2026-01-06 19:06:20 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 19:06:20 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-06 19:07:05 - ai_docs_agent - WARNING - Passo 3: JSON inválido recebido.
+2026-01-06 19:08:41 - ai_docs_agent - WARNING - Passo 6: JSON inválido recebido.
+2026-01-06 19:09:02 - ai_docs_agent - WARNING - Passo 8: JSON inválido recebido.
+2026-01-06 19:09:15 - ai_docs_agent - WARNING - Passo 9: JSON inválido recebido.
+2026-01-06 19:09:47 - ai_docs_agent - WARNING - Passo 11: JSON inválido recebido.
+2026-01-06 19:10:38 - ai_docs_agent - ERROR - Falha ao processar JSON do Crítico: Agente excedeu o tempo limite ou falhou em chegar a uma conclusão.
+2026-01-06 19:14:40 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 19:15:10 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification\ai-quality-critic-agent/src
+2026-01-06 19:21:32 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 19:21:32 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-06 19:24:38 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 19:24:38 - ai_docs_agent - ERROR - Agente Crítico falhou: 'dict' object has no attribute 'replace'
+2026-01-06 19:28:36 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 19:28:59 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification\ai-quality-critic-agent/src
+2026-01-06 19:35:04 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 19:35:04 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-06 19:37:37 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 19:37:37 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 19:38:27 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification\ai-quality-critic-agent/src
+2026-01-06 19:39:45 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 19:39:45 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-06 19:41:01 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 19:41:02 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 19:41:30 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification\ai-quality-critic-agent/src
+2026-01-06 19:50:33 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 19:50:33 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-06 19:52:49 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-06 20:29:33 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 20:29:47 - ai_docs_agent - WARNING - Passo 2: JSON inválido recebido.
+2026-01-06 20:29:56 - ai_docs_agent - ERROR - Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:04 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 20:32:04 - ai_docs_agent - ERROR - Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:04 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-06 20:32:04 - ai_docs_agent - ERROR - Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:04 - ai_docs_agent - ERROR - Falha ao processar JSON do Crítico: Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:05 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 20:32:05 - ai_docs_agent - ERROR - Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:05 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-06 20:32:05 - ai_docs_agent - ERROR - Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:05 - ai_docs_agent - ERROR - Falha ao processar JSON do Crítico: Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:05 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-06 20:32:05 - ai_docs_agent - ERROR - Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:05 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-06 20:32:05 - ai_docs_agent - ERROR - Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-06 20:32:05 - ai_docs_agent - ERROR - Falha ao processar JSON do Crítico: Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}

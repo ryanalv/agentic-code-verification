@@ -2,9 +2,9 @@ from src.agents.react_core import ReActAgent
 from src.utils.file_tools import read_project_files
 import os
 
-def analyze_codebase(project_path: str, project_name: str) -> str:
+def analyze_codebase(project_path: str, project_name: str, feedback: str = None) -> dict:
     """
-    Spins up a ReAct agent to analyze a local codebase.
+    Inicia um agente ReAct para analisar uma base de código local.
     """
     tools = {
         "read_project_files": read_project_files
@@ -39,4 +39,7 @@ def analyze_codebase(project_path: str, project_name: str) -> str:
 
     """
     
+    if feedback:
+        goal += f"\n\nATENÇÃO - FEEDBACK DE CRÍTICA ANTERIOR:\n{feedback}\nPor favor, corrija os pontos acima na nova documentação."
+
     return agent.run(goal)
