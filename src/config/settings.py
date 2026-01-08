@@ -1,3 +1,4 @@
+# Gerenciador de configurações do projeto, lidando com variáveis de ambiente e diretórios.
 import os
 from dotenv import load_dotenv
 

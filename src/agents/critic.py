@@ -1,3 +1,4 @@
+# Agente responsável por revisar a documentação gerada, verificar alucinações e atribuir nota de qualidade.
 from typing import Dict, List, Any, Optional
 import os
 import re

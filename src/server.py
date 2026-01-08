@@ -1,3 +1,4 @@
+# Servidor FastAPI que provê a interface web e gerencia o fluxo de análise em tempo real (SSE).
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles

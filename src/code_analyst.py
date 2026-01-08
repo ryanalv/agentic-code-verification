@@ -1,3 +1,4 @@
+# Orquestrador que utiliza o agente ReAct para analisar a base de código e gerar documentação técnica.
 from src.agents.react_core import ReActAgent
 from src.utils.file_tools import read_project_files
 import os

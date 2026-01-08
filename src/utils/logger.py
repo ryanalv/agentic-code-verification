@@ -1,3 +1,4 @@
+# Configuração centralizada de logging para registro de eventos no console e em arquivos.
 import logging
 import sys
 from src.config import settings

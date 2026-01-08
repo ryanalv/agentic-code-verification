@@ -1,3 +1,4 @@
+# Script de teste que executa o ciclo completo de análise e crítica para validação do sistema.
 import os
 import sys
 import time

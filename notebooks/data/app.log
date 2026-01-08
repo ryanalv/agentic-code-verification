@@ -85,3 +85,47 @@
         Você é um Crítico de Código e Documentaçã...
 2026-01-07 10:41:47 - ai_docs_agent - ERROR - Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
 2026-01-07 10:41:47 - ai_docs_agent - ERROR - Falha ao processar JSON do Crítico: Erro ao chamar LLM: Error code: 403 - {'error': {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/settings/keys', 'code': 403}}
+2026-01-08 08:44:20 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-08 08:44:24 - ai_docs_agent - WARNING - Passo 1: JSON inválido recebido.
+2026-01-08 08:44:26 - ai_docs_agent - WARNING - Passo 2: JSON inválido recebido.
+2026-01-08 08:44:28 - ai_docs_agent - WARNING - Passo 3: JSON inválido recebido.
+2026-01-08 08:44:32 - ai_docs_agent - WARNING - Passo 4: JSON inválido recebido.
+2026-01-08 08:44:40 - ai_docs_agent - WARNING - Passo 5: JSON inválido recebido.
+2026-01-08 08:44:41 - ai_docs_agent - WARNING - Passo 6: JSON inválido recebido.
+2026-01-08 08:44:45 - ai_docs_agent - WARNING - Passo 7: JSON inválido recebido.
+2026-01-08 08:44:47 - ai_docs_agent - WARNING - Passo 8: JSON inválido recebido.
+2026-01-08 08:44:49 - ai_docs_agent - WARNING - Passo 9: JSON inválido recebido.
+2026-01-08 08:45:07 - ai_docs_agent - WARNING - Passo 10: JSON inválido recebido.
+2026-01-08 08:45:21 - ai_docs_agent - WARNING - Passo 11: JSON inválido recebido.
+2026-01-08 08:45:26 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\\Projetos Estudos\\Agentes IA\\agentic-code-verification/src
+2026-01-08 08:45:29 - ai_docs_agent - WARNING - Passo 13: JSON inválido recebido.
+2026-01-08 08:46:55 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-08 08:46:55 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-08 08:46:59 - ai_docs_agent - ERROR - Agente Crítico falhou: 'list' object has no attribute 'get'
+2026-01-08 08:46:59 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-08 08:47:01 - ai_docs_agent - WARNING - Passo 1: JSON inválido recebido.
+2026-01-08 08:47:19 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification/src
+2026-01-08 08:53:31 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-08 08:53:58 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification/src
+2026-01-08 08:58:15 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-08 08:58:15 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-08 09:03:04 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-08 09:03:04 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-08 09:03:24 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification/src
+2026-01-08 09:09:54 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-08 09:09:54 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-08 09:11:39 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-08 09:11:39 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-01-08 09:12:07 - ai_docs_agent - INFO - Executando ferramenta: read_project_files com entrada: c:\Projetos Estudos\Agentes IA\agentic-code-verification/src
+2026-01-08 09:19:51 - ai_docs_agent - INFO - Agente alcançou a resposta final.
+2026-01-08 09:19:51 - ai_docs_agent - INFO - Iniciando Agente ReAct para objetivo: 
+        Você é um Crítico de Código e Documentaçã...
+2026-01-08 09:20:39 - ai_docs_agent - INFO - Agente alcançou a resposta final.

@@ -1,3 +1,4 @@
+# Infraestrutura que serve para distribuir, empacotar e instalar o projeto. 
 from setuptools import setup, find_packages
 
 setup(

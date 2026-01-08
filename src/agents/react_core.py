@@ -1,3 +1,4 @@
+# Motor principal de raciocínio ReAct que permite aos agentes usarem ferramentas e pensarem por passos.
 import os
 import json
 import re

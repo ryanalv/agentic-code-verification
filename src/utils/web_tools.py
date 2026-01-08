@@ -1,3 +1,4 @@
+# Ferramentas para busca na web e extração de conteúdo (scraping) de páginas HTML.
 from duckduckgo_search import DDGS
 import requests
 from bs4 import BeautifulSoup

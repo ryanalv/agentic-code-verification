@@ -1,3 +1,4 @@
+# Utilitário para leitura recursiva de arquivos do projeto, ignorando pastas desnecessárias.
 import os
 
 def read_project_files(directory_path: str) -> str:
