@@ -1,4 +1,4 @@
-# src/agents/critic.py (Versão Unificada Proposta)
+# src/agents/critic.py (Versão Unificada IDEIA)
 
 from typing import Dict, List, Any
 import os
@@ -130,4 +130,4 @@ class UnifiedCriticAgent:
         quality = self.evaluate_quality(text)
         
         # ... Lógica de consolidação de nota ...
-        return {"approved": True, "score": 9, "feedback": "Ok"} # Exemplo
+        return {"approved": True, "score": 9, "feedback": "Ok"} # teste
