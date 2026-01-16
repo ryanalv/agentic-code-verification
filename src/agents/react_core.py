@@ -5,7 +5,7 @@ import re
 from openai import OpenAI
 from typing import List, Dict, Callable, Optional, Any
 from src.config import settings
-from src.utils.logger import logger
+from src.utils.logger import logger, add_tokens, set_step
 
 class ReActAgent:
     def __init__(self, model_name: str = "moonshotai/kimi-k2-thinking", tools: Dict[str, Callable] = None):
@@ -105,6 +105,12 @@ Regras:
                     response_format={"type": "json_object"} # Força modo JSON se suportado
                 )
                 output = response.choices[0].message.content.strip()
+                
+                # Rastreia uso
+                if hasattr(response, 'usage') and response.usage:
+                     total_tokens = response.usage.total_tokens
+                     add_tokens(total_tokens)
+                     
             except Exception as e:
                 logger.error(f"Erro ao chamar LLM: {e}")
                 return {
@@ -118,7 +124,7 @@ Regras:
             # Anexa ao histórico
             messages.append({"role": "assistant", "content": output})
             
-            # Parse JSON
+            # Analisa JSON
             parsed_output = self._parse_json_response(output)
             
             if not parsed_output:
@@ -186,3 +192,4 @@ Regras:
             "steps": self.max_steps,
             "usage": {"total_tokens": 0} # Placeholder/Estimativa
         }
+

@@ -84,6 +84,7 @@ class CriticAgent:
             result = self.agent.run(prompt)
             # ReActAgent retorna um dict agora, extrai final_answer
             final_answer = result.get("final_answer", "")
+            usage = result.get("usage", {"total_tokens": 0})
             
             data = {}
             # Se final_answer já for um dict (LLM retornou objeto aninhado), usamos direto
@@ -97,13 +98,14 @@ class CriticAgent:
                     data = json.loads(clean_json)
                 except json.JSONDecodeError:
                     logger.error(f"Falha ao processar JSON do Crítico: {final_answer}")
-                    return {"score": 5, "feedback": "Erro ao analisar resposta do crítico. Formato inválido.", "reasoning": "Falha sistêmica."}
+                    return {"score": 5, "feedback": "Erro ao analisar resposta do crítico. Formato inválido.", "reasoning": "Falha sistêmica.", "usage": usage}
             
+            data["usage"] = usage
             return data
                 
         except Exception as e:
             logger.error(f"Agente Crítico falhou: {e}")
-            return {"score": 0, "feedback": f"Erro interno do crítico: {e}", "reasoning": "Exceção."}
+            return {"score": 0, "feedback": f"Erro interno do crítico: {e}", "reasoning": "Exceção.", "usage": {"total_tokens": 0}}
 
     def review(self, analyst_output: str, project_path: str) -> Dict[str, Any]:
         """
@@ -117,6 +119,7 @@ class CriticAgent:
         
         score = quality_assessment.get("score", 0)
         feedback = quality_assessment.get("feedback", "")
+        usage = quality_assessment.get("usage", {"total_tokens": 0})
         
         approved = True
         final_feedback = ""
@@ -136,5 +139,6 @@ class CriticAgent:
             "score": score,
             "feedback": final_feedback.strip(),
             "hallucinations": hallucinations,
-            "quality_feedback": feedback
+            "quality_feedback": feedback,
+            "usage": usage
         }

@@ -32,18 +32,18 @@ def read_project_files(directory_path: str) -> str:
             try:
                 with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()
-                    # Skip empty files or very large files (simple heuristic)
+                    # Pula arquivos vazios ou muito grandes (heurística simples)
                     if not content.strip():
                         continue
                     if len(content) > 100000: # Pula arquivos enormes > 100KB para economizar contexto
-                        content = content[:2000] + "\n... [File truncated due to size] ..."
+                        content = content[:2000] + "\n... [Arquivo truncado devido ao tamanho] ..."
                         
-                    all_content.append(f"--- File: {rel_path} ---\n{content}\n")
+                    all_content.append(f"--- Arquivo: {rel_path} ---\n{content}\n")
             except Exception as e:
-                print(f"Skipping file {rel_path}: {e}")
+                print(f"Pulando arquivo {rel_path}: {e}")
 
     result = "\n".join(all_content)
     if not result:
-        return "No readable text files found in the directory."
+        return "Nenhum arquivo de texto legível encontrado no diretório."
         
     return result

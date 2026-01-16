@@ -97,8 +97,8 @@ def run_analysis_loop(max_retries=2):
             }
         else:
             review_result = critic.review(doc_text, PROJECT_PATH)
-            # Log extra para debug
-            print(f"Debug Critic Output: {review_result}")
+            # Log extra para depuração
+            print(f"Saída do Crítico (Depuração): {review_result}")
         
         end_time = time.time()
         duration = end_time - start_time

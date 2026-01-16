@@ -4,20 +4,20 @@ import requests
 from bs4 import BeautifulSoup
 
 def web_search(query: str, max_results: int = 3) -> str:
-    """Performs a web search using DuckDuckGo."""
-    print(f"  [Tool] Searching for: {query}")
+    """Realiza uma busca na web usando DuckDuckGo."""
+    print(f"  [Ferramenta] Buscando por: {query}")
     results = []
     try:
         with DDGS() as ddgs:
             for r in ddgs.text(query, max_results=max_results):
-                results.append(f"Title: {r['title']}\nURL: {r['href']}\nSnippet: {r['body']}\n")
+                results.append(f"Título: {r['title']}\nURL: {r['href']}\nTrecho: {r['body']}\n")
         return "\n---\n".join(results)
     except Exception as e:
-        return f"Error searching: {str(e)}"
+        return f"Erro na busca: {str(e)}"
 
 def scrape_page(url: str) -> str:
-    """Scrapes the content of a web page."""
-    print(f"  [Tool] Scraping URL: {url}")
+    """Extrai o conteúdo de uma página web."""
+    print(f"  [Ferramenta] Extraindo URL: {url}")
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         response = requests.get(url, headers=headers, timeout=10)

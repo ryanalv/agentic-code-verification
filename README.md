@@ -96,6 +96,8 @@ Para você se localizar:
     - `code_analyst.py`: O agente operário (Analista).
   - **`web/`**: Arquivos da interface visual (HTML).
   - `server.py`: O servidor que conecta a interface ao código Python.
+  - **`utils/`**: Utilitários e helpers.
+    - `logger.py`: Sistema de logs avançado com contexto (passos e tokens).
 - **`docs/`**: Documentação técnica detalhada.
 - **`notebooks/`**: Experimentos e análises de dados.
 - **`tests/`**: Scripts para testar se tudo está funcionando.

@@ -8,6 +8,7 @@ import asyncio
 import json
 import os
 import sys
+import contextvars
 
 # Garante que a raiz do projeto está no path para que 'import src.xxx' funcione
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -17,6 +18,8 @@ if PROJECT_ROOT not in sys.path:
 from src.code_analyst import analyze_codebase
 from src.agents.critic import CriticAgent
 from src.config import settings
+from src.utils.logger import logger, set_step, set_tokens, add_tokens, current_step, current_tokens
+import datetime
 
 app = FastAPI()
 
@@ -35,30 +38,50 @@ app.add_middleware(
 # Modo Mock / Real
 USE_MOCK = os.getenv("OPENROUTER_API_KEY") is None
 
-async def run_analysis_generator():
+async def run_analysis_generator(project_path_arg):
     """
     Generator that runs the analysis loop and yields SSE events.
     """
-    project_path = os.path.join(os.getcwd(), "src")    # Analisa a si mesmo
-    project_name = "AI Quality Critic Agent"
+    # Se não for passado caminho, usa o src do próprio projeto
+    if not project_path_arg or project_path_arg.strip() == "":
+        project_path = os.path.join(PROJECT_ROOT, "src")
+        project_name = "AI Quality Critic Agent (Self-Analysis)"
+    else:
+        project_path = project_path_arg.strip()
+        project_name = os.path.basename(project_path) if os.path.basename(project_path) else "Target Project"
     
-    yield f"data: {json.dumps({'type': 'log', 'message': f'Iniciando análise em: {project_path}'})}\n\n"
+    # Initialize Context
+    set_step("Initialization")
+    set_tokens(0)
+    
+    start_msg = f"Iniciando análise em: {project_path}"
+    logger.info(start_msg)
+    yield f"data: {json.dumps({'type': 'log', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': current_step.get(), 'tokens': current_tokens.get(), 'message': start_msg})}\n\n"
     
     critic = None
     if not USE_MOCK:
         try:
             critic = CriticAgent()
-            yield f"data: {json.dumps({'type': 'log', 'message': 'Agente Crítico inicializado.'})}\n\n"
+            msg = "Agente Crítico inicializado."
+            logger.info(msg)
+            yield f"data: {json.dumps({'type': 'log', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': current_step.get(), 'tokens': current_tokens.get(), 'message': msg})}\n\n"
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'message': f'Erro ao inicializar Crítico: {e}'})}\n\n"
+            err_msg = f"Erro ao inicializar Crítico: {e}"
+            logger.error(err_msg)
+            yield f"data: {json.dumps({'type': 'error', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': current_step.get(), 'tokens': current_tokens.get(), 'message': err_msg})}\n\n"
             yield f"data: {json.dumps({'type': 'warning', 'message': 'Continuando em modo Mock devido a erro na API.'})}\n\n"
     
     current_feedback = None
     max_retries = 2
     
     for i in range(max_retries + 1):
+        step_name = f"Round {i+1} - Analyst"
+        set_step(step_name)
         yield f"data: {json.dumps({'type': 'status', 'message': f'Iteração {i+1}: Executando Analista de Código...'})}\n\n"
-        yield f"data: {json.dumps({'type': 'log', 'message': 'Analista está lendo arquivos e gerando documentação...'})}\n\n"
+        
+        msg = "Analista está lendo arquivos e gerando documentação..."
+        logger.info(msg)
+        yield f"data: {json.dumps({'type': 'log', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': step_name, 'tokens': current_tokens.get(), 'message': msg})}\n\n"
         
         # 1. Executar Analista
         analyst_start = asyncio.get_event_loop().time()
@@ -78,7 +101,14 @@ async def run_analysis_generator():
              # Nota: Isto é bloqueante, em uma aplicação real deveria estar em um threadpool
              loop = asyncio.get_event_loop()
              try:
-                result = await loop.run_in_executor(None, analyze_codebase, project_path, project_name, current_feedback)
+                # Verificando se o caminho existe
+                if not os.path.exists(project_path):
+                     raise FileNotFoundError(f"Caminho não encontrado: {project_path}")
+
+                # Captura contexto para propagar para a thread
+                ctx = contextvars.copy_context()
+                analyze_func = lambda: analyze_codebase(project_path, project_name, current_feedback)
+                result = await loop.run_in_executor(None, ctx.run, analyze_func)
                 doc_text = result.get("final_answer", "")
                 steps = result.get("steps", 0)
                 usage = result.get("usage", {})
@@ -86,11 +116,18 @@ async def run_analysis_generator():
                  yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
                  break
 
-        tokens = usage.get("total_tokens", "?")
-        yield f"data: {json.dumps({'type': 'log', 'message': f'Analista finalizou em {steps} passos. Tokens estimados: {tokens}'})}\n\n"
+        tokens_used = usage.get("total_tokens", 0)
+        if isinstance(tokens_used, int):
+            add_tokens(tokens_used)
+        
+        msg = f"Analista finalizou em {steps} passos. Tokens estimados bloco: {tokens_used}"
+        logger.info(msg)
+        yield f"data: {json.dumps({'type': 'log', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': current_step.get(), 'tokens': current_tokens.get(), 'message': msg})}\n\n"
         yield f"data: {json.dumps({'type': 'doc_preview', 'content': doc_text[:500] + '...'})}\n\n"
         
         # 2. Executar Crítico
+        step_name = f"Round {i+1} - Critic"
+        set_step(step_name)
         yield f"data: {json.dumps({'type': 'status', 'message': f'Iteração {i+1}: Executando Agente Crítico...'})}\n\n"
         
         if USE_MOCK or critic is None:
@@ -101,9 +138,22 @@ async def run_analysis_generator():
                  review = {"approved": True, "score": 9, "feedback": "Excelente.", "hallucinations": []}
         else:
             loop = asyncio.get_event_loop()
-            review = await loop.run_in_executor(None, critic.review, doc_text, project_path)
+            ctx = contextvars.copy_context()
+            review_func = lambda: critic.review(doc_text, project_path)
+            review = await loop.run_in_executor(None, ctx.run, review_func)
             
-        yield f"data: {json.dumps({'type': 'metrics', 'score': review['score'], 'hallucinations': len(review['hallucinations']), 'approved': review['approved']})}\n\n"
+        # Rastreia tokens do Crítico
+        critic_usage = review.get("usage", {})
+        critic_tokens = critic_usage.get("total_tokens", 0)
+        if isinstance(critic_tokens, int):
+            add_tokens(critic_tokens)
+
+        # Loga fim do crítico
+        msg = f"Crítico finalizou. Tokens estimados bloco: {critic_tokens}"
+        logger.info(msg)
+        yield f"data: {json.dumps({'type': 'log', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': current_step.get(), 'tokens': current_tokens.get(), 'message': msg})}\n\n"
+            
+        yield f"data: {json.dumps({'type': 'metrics', 'score': review['score'], 'hallucinations': len(review['hallucinations']), 'approved': review['approved'], 'total_tokens': current_tokens.get()})}\n\n"
         
         if review['approved']:
             yield f"data: {json.dumps({'type': 'success', 'message': 'Documentação APROVADA pelo Crítico!'})}\n\n"
@@ -124,8 +174,8 @@ async def get_index():
         return HTMLResponse(f.read())
 
 @app.get("/stream_analysis")
-async def stream_analysis():
-    return StreamingResponse(run_analysis_generator(), media_type="text/event-stream")
+async def stream_analysis(project_path: str = ""):
+    return StreamingResponse(run_analysis_generator(project_path), media_type="text/event-stream")
 
 if __name__ == "__main__":
     uvicorn.run("src.server:app", host="127.0.0.1", port=8000, reload=True)

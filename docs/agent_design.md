@@ -37,6 +37,13 @@ Este projeto implementa uma arquitetura de **Refinamento Iterativo**:
 - **FastAPI**: Framework web usado para criar o servidor.
 - **SSE (Server-Sent Events)**: Tecnologia usada para enviar dados em tempo real para o navegador. Ao inverso de uma requisição normal (que espera tudo ficar pronto para responder), o SSE mantém um canal aberto e envia cada log ("Pensando...", "Lendo arquivo...") assim que acontece.
 
+### 2.4 Sistema de Logs e Contexto (`src/utils/logger.py`)
+- **Problema**: Em sistemas complexos, é difícil saber qual "passo" lógico gerou um log específico.
+- **Solução**: Uso de `contextvars`.
+    - O módulo `logger.py` define variáveis de contexto (`current_step`, `current_tokens`).
+    - Um `ContextFilter` injeta esses valores automaticamente em cada linha de log.
+    - Isso permite logs ricos e contextuais sem poluir as assinaturas das funções.
+
 ---
 
 ## 3. Fluxo de Execução (O Loop)
