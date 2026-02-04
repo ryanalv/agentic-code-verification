@@ -1,144 +1,204 @@
 # Agente responsável por revisar a documentação gerada, verificar alucinações e atribuir nota de qualidade.
+# Refatorado para usar Arquitetura Hierárquica (Map-Reduce) com PraisonAI
 from typing import Dict, List, Any, Optional
 import os
-import re
 import json
-from src.agents.react_core import ReActAgent
+import re
+import re
+from praisonaiagents import Agent, Task, AgentTeam
+from langchain.tools import tool
 from src.utils.logger import logger
+from src.utils.text_splitter import split_markdown_by_headers
+
+# Ferramenta para verificação de arquivos
+@tool("check_files_existence")
+def check_files_existence(file_paths: List[str], project_path: str) -> List[str]:
+    """
+    Verifica se uma lista de caminhos de arquivos existe dentro do diretório do projeto.
+    Retorna uma lista dos arquivos que NÃO foram encontrados (alucinações).
+    """
+    missing_files = []
+    
+    # Normalização de input robusta
+    if isinstance(file_paths, str):
+        try:
+             file_paths = json.loads(file_paths)
+        except:
+             if ',' in file_paths:
+                 file_paths = [x.strip() for x in file_paths.split(',')]
+             else:
+                 file_paths = [file_paths]
+    
+    # Se ainda não for lista, encapsula
+    if not isinstance(file_paths, list):
+        file_paths = [str(file_paths)]
+
+    for file_ref in file_paths:
+        # Normaliza separadores
+        normalized_ref = str(file_ref).replace('/', os.sep).replace('\\', os.sep)
+        # Remove caracteres indesejados comuns (ex: backticks)
+        normalized_ref = normalized_ref.replace('`', '').strip()
+        
+        if normalized_ref.startswith(os.sep):
+            normalized_ref = normalized_ref[1:]
+            
+        full_path = os.path.join(project_path, normalized_ref)
+        
+        if not os.path.exists(full_path):
+            # Tenta verificar em src/ também
+            src_path = os.path.join(project_path, 'src', normalized_ref)
+            if not os.path.exists(src_path):
+                 missing_files.append(file_ref)
+    
+    return missing_files
 
 class CriticAgent:
-    def __init__(self, model_name: str = "moonshotai/kimi-k2-thinking"):
-        self.model_name = model_name
-        self.agent = ReActAgent(model_name=model_name) # Usado para avaliação
-
-    def check_hallucinations(self, text: str, project_path: str) -> List[str]:
-        """
-        Escaneia o texto por caminhos de arquivos e verifica se eles existem em project_path.
-        Retorna uma lista de arquivos faltantes (alucinações).
-        """
-        # Regex para encontrar caminhos de arquivos: procura por palavras terminando em extensões ou dentro de backticks/links
-        potential_files = set()
-        
-        # Encontra dentro de backticks `arquivo.ext`
-        matches_ticks = re.findall(r'`([\w\/\\.-]+\.\w+)`', text)
-        potential_files.update(matches_ticks)
-        
-        # Encontra links markdown [label](caminho)
-        matches_links = re.findall(r'\]\(([\w\/\\.-]+\.\w+)\)', text)
-        potential_files.update(matches_links)
-
-        # Filtra falsos positivos comuns ou links externos
-        filtered_files = [f for f in potential_files if not f.startswith('http')]
-        
-        missing_files = []
-        for file_ref in filtered_files:
-            # Normaliza separadores de caminho
-            normalized_ref = file_ref.replace('/', os.sep).replace('\\', os.sep)
+    def __init__(self):
+        # Configuração automática para OpenRouter se disponível
+        if not os.getenv("OPENAI_API_KEY") and os.getenv("OPENROUTER_API_KEY"):
+            os.environ["OPENAI_API_KEY"] = os.getenv("OPENROUTER_API_KEY")
+            os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
             
-            # Remove barra inicial se presente para juntar corretamente
-            if normalized_ref.startswith(os.sep):
-                normalized_ref = normalized_ref[1:]
-                
-            full_path = os.path.join(project_path, normalized_ref)
-            
-            # Verificação simples: se arquivo não existe E não é um arquivo raiz comum que perdemos
-            if not os.path.exists(full_path):
-                # Tenta verificar se é relativo a src (comum em python)
-                src_path = os.path.join(project_path, 'src', normalized_ref)
-                if not os.path.exists(src_path):
-                     missing_files.append(file_ref)
-                     
-        return missing_files
-
-    def evaluate_quality(self, text: str) -> Dict[str, Any]:
-        """
-        Avalia a qualidade da documentação usando um LLM.
-        Retorna um dicionário com 'score' (0-10) e 'feedback'.
-        """
-        prompt = f"""
-        Você é um Crítico de Código e Documentação experiente.
-        Avalie a qualidade da seguinte documentação técnica gerada automaticamente.
-        
-        Critérios de Avaliação (0-10):
-        1. Clareza e Estrutura: A documentação está bem organizada e legível?
-        2. Completude: Cobre arquitetura, fluxo de dados, dependências e configuração?
-        3. Profundidade Técnica: Explica O QUE e COMO, não apenas lista arquivos?
-        
-        Documentação para análise:
-        === INÍCIO ===
-        {text[:8000]}  # Truncating to avoid context limits if necessary
-        === FIM ===
-        
-        Retorne APENAS um JSON no seguinte formato (respeite a estrutura do Agente):
-        {{
-             "thought": "Analisei o texto e avaliei...",
-             "final_answer": "{{\\"score\\": <nota>, \\"feedback\\": \\"<texto>\\", \\"reasoning\\": \\"<texto>\\"}}"
-        }}
-        
-        Nota: O campo `final_answer` DEVE ser uma string contendo o JSON de avaliação escapado, ou apenas o JSON de avaliação.
-        """
-        
-        # Usamos uma chamada direta ou um run simples já que queremos apenas processamento de texto.
-        # Reusar ReActAgent.run funciona bem.
-        try:
-            result = self.agent.run(prompt)
-            # ReActAgent retorna um dict agora, extrai final_answer
-            final_answer = result.get("final_answer", "")
-            usage = result.get("usage", {"total_tokens": 0})
-            
-            data = {}
-            # Se final_answer já for um dict (LLM retornou objeto aninhado), usamos direto
-            if isinstance(final_answer, dict):
-                data = final_answer
-            else:
-                # Faz o parse do JSON da resposta
-                try:
-                    # Limpando blocos de código markdown se presente
-                    clean_json = str(final_answer).replace("```json", "").replace("```", "").strip()
-                    data = json.loads(clean_json)
-                except json.JSONDecodeError:
-                    logger.error(f"Falha ao processar JSON do Crítico: {final_answer}")
-                    return {"score": 5, "feedback": "Erro ao analisar resposta do crítico. Formato inválido.", "reasoning": "Falha sistêmica.", "usage": usage}
-            
-            data["usage"] = usage
-            return data
-                
-        except Exception as e:
-            logger.error(f"Agente Crítico falhou: {e}")
-            return {"score": 0, "feedback": f"Erro interno do crítico: {e}", "reasoning": "Exceção.", "usage": {"total_tokens": 0}}
+        # Modelos configuráveis via ENV ou hardcoded para este exemplo
+        self.worker_model = "gpt-4o-mini" # Rápido e barato para leitura de volume
+        self.manager_model = "gpt-4o"     # Inteligente para decisão final
+        logger.info("CriticAgent Hierárquico (PraisonAI) inicializado.")
 
     def review(self, analyst_output: str, project_path: str) -> Dict[str, Any]:
         """
-        Orquestra o processo de revisão.
+        Orquestra o processo de revisão hierárquica.
+        1. Fatia a documentação (Map)
+        2. Analisa cada seção em paralelo/sequencial (Process)
+        3. Consolida os resultados (Reduce)
         """
-        # 1. Verifica Alucinações
-        hallucinations = self.check_hallucinations(analyst_output, project_path)
+        logger.info("Iniciando revisão hierárquica...")
         
-        # 2. Avalia Qualidade
-        quality_assessment = self.evaluate_quality(analyst_output)
+        # 1. Split da Documentação
+        sections = split_markdown_by_headers(analyst_output)
+        logger.info(f"Documentação dividida em {len(sections)} seções para análise.")
         
-        score = quality_assessment.get("score", 0)
-        feedback = quality_assessment.get("feedback", "")
-        usage = quality_assessment.get("usage", {"total_tokens": 0})
+        if not sections:
+            return {"approved": False, "score": 0, "feedback": "Documentação vazia ou inválida.", "hallucinations": []}
+
+        # 2. Definição dos Agentes
         
-        approved = True
-        final_feedback = ""
+        # Agente Especialista (Worker)
+        section_critic = Agent(
+            role="Revisor Técnico de Seção",
+            goal="Verificar a existência de arquivos e a profundidade técnica de uma seção específica da documentação.",
+            backstory="Você é um revisor de código meticuloso. Você recebe uma seção de um documento e deve verificar se cada arquivo mencionado realmente existe usando sua ferramenta. Você é estritamente técnico.",
+            tools=[check_files_existence],
+            llm=self.worker_model
+        )
+
+        # Agente Líder (Manager)
+        lead_critic = Agent(
+            role="Arquiteto Líder de Documentação",
+            goal="Consolidar revisões de seções em um veredito final.",
+            backstory="Você é o Gerente de Release. Você lê os relatórios de análise de sua equipe e decide se a documentação é boa o suficiente para ser publicada. Você é rigoroso com alucinações (arquivos inexistentes).",
+            llm=self.manager_model
+        )
+
+        # 3. Criação Dinâmica de Tarefas (Tasks)
+        tasks = []
         
-        # Lógica de Aprovação
-        if hallucinations:
-            approved = False
-            final_feedback += f"Problemas de Alucinação detectados: Os seguintes arquivos citados não existem no projeto: {', '.join(hallucinations)}. "
-            score = max(0, score - 2) # Penaliza a nota
+        # Para cada seção, cria uma tarefa de revisão
+        for title, content in sections.items():
+            # Pula seções muito pequenas/vazias
+            if len(content) < 50: 
+                continue
+                
+            task_desc = f"""
+            REVISAR SEÇÃO: '{title}'
             
-        if score < 7: # Limite
-            approved = False
-            final_feedback += f"Qualidade Insuficiente (Nota {score}/10): {feedback}"
+            CONTEÚDO:
+            {content[:15000]} 
+            
+            SEU TRABALHO:
+            1. Identificar TODOS os caminhos de arquivos mencionados nesta seção (procure em blocos de código, crases, comentários).
+            2. Executar a ferramenta 'check_files_existence' com project_path='{project_path}' e a lista de arquivos.
+            3. Avaliar a Clareza e Completude desta seção (0-10).
+            
+            SAÍDA:
+            Retorne um resumo JSON com:
+            {{ "section": "{title}", "score": number, "missing_files": ["list"] }}
+            """
+            
+            task = Task(
+                description=task_desc,
+                expected_output="Resumo JSON da revisão da seção",
+                agent=section_critic
+            )
+            tasks.append(task)
+            
+        # Tarefa de Consolidação (Reduce)
+        consolidation_desc = f"""
+        Você recebeu relatórios de sua equipe sobre as seções da documentação.
         
-        return {
-            "approved": approved,
-            "score": score,
-            "feedback": final_feedback.strip(),
-            "hallucinations": hallucinations,
-            "quality_feedback": feedback,
-            "usage": usage
-        }
+        SEU TRABALHO:
+        1. Calcular a pontuação média global (0-10).
+        2. Compilar uma LISTA MESTRA de TODOS os arquivos ausentes únicos (alucinações) relatados por sua equipe.
+        3. Escrever um texto de feedback final resumindo a qualidade da documentação.
+        
+        CRITÉRIOS:
+        - Se houver QUALQUER arquivo ausente (alucinação), o status 'approved' DEVE ser False.
+        - Se a pontuação global for inferior a 7.0, 'approved' DEVE ser False.
+        
+        FORMATO DE SAÍDA FINAL:
+        Retorne um ÚNICO objeto JSON válido (sem markdown):
+        {{
+            "approved": boolean,
+            "score": number, 
+            "feedback": "string",
+            "hallucinations": ["lista", "de", "todos", "arquivos", "ausentes"],
+            "quality_feedback": "feedback técnico detalhado"
+        }}
+        """
+        
+        consolidation_task = Task(
+            description=consolidation_desc,
+            expected_output="Objeto JSON final com o veredito",
+            agent=lead_critic,
+            context=tasks # Recebe o output de todas as tarefas anteriores
+        )
+        tasks.append(consolidation_task)
+
+        # 4. Execução PraisonAI
+        team = AgentTeam(
+            agents=[section_critic, lead_critic],
+            tasks=tasks,
+            process="sequential"
+        )
+        
+        try:
+            result_raw = team.start()
+            logger.debug(f"PraisonAI raw result: {result_raw}")
+            
+            # Parsing do Resultado Final
+            clean_result = str(result_raw).replace("```json", "").replace("```", "").strip()
+            
+            # Tenta encontrar o JSON final na string (pode vir sujo com texto do agente)
+            json_match = re.search(r'\{.*\}', clean_result, re.DOTALL)
+            if json_match:
+                result_json = json.loads(json_match.group(0))
+            else:
+                # Fallback se não achar JSON
+                logger.error("Falha ao parsear JSON final do PraisonAI")
+                return {
+                    "approved": False,
+                    "score": 0,
+                    "feedback": "Erro: Agente não retornou JSON válido.",
+                    "hallucinations": [],
+                    "quality_feedback": str(clean_result)
+                }
+            
+            return result_json
+
+        except Exception as e:
+            logger.error(f"Erro na execução hierárquica: {e}")
+            return {
+                "approved": False,
+                "score": 0,
+                "feedback": f"Exception na pipeline: {e}",
+                "hallucinations": [],
+            }

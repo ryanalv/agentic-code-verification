@@ -16,7 +16,7 @@ if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
 from src.code_analyst import analyze_codebase
-from src.agents.critic import CriticAgent
+from src.pipelines.review_pipeline import ReviewPipeline
 from src.config import settings
 from src.utils.logger import logger, set_step, set_tokens, add_tokens, current_step, current_tokens
 import datetime
@@ -58,15 +58,16 @@ async def run_analysis_generator(project_path_arg):
     logger.info(start_msg)
     yield f"data: {json.dumps({'type': 'log', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': current_step.get(), 'tokens': current_tokens.get(), 'message': start_msg})}\n\n"
     
-    critic = None
+    critic_pipeline = None
     if not USE_MOCK:
         try:
-            critic = CriticAgent()
-            msg = "Agente Crítico inicializado."
+            # Substituindo CriticAgent direto pela Pipeline Hexagonal
+            critic_pipeline = ReviewPipeline()
+            msg = "Pipeline de Revisão (Hexagonal) inicializada."
             logger.info(msg)
             yield f"data: {json.dumps({'type': 'log', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': current_step.get(), 'tokens': current_tokens.get(), 'message': msg})}\n\n"
         except Exception as e:
-            err_msg = f"Erro ao inicializar Crítico: {e}"
+            err_msg = f"Erro ao inicializar Pipeline: {e}"
             logger.error(err_msg)
             yield f"data: {json.dumps({'type': 'error', 'timestamp': datetime.datetime.now().strftime('%H:%M:%S'), 'step': current_step.get(), 'tokens': current_tokens.get(), 'message': err_msg})}\n\n"
             yield f"data: {json.dumps({'type': 'warning', 'message': 'Continuando em modo Mock devido a erro na API.'})}\n\n"
@@ -128,9 +129,9 @@ async def run_analysis_generator(project_path_arg):
         # 2. Executar Crítico
         step_name = f"Round {i+1} - Critic"
         set_step(step_name)
-        yield f"data: {json.dumps({'type': 'status', 'message': f'Iteração {i+1}: Executando Agente Crítico...'})}\n\n"
+        yield f"data: {json.dumps({'type': 'status', 'message': f'Iteração {i+1}: Executando Agente Crítico (Hierárquico)...'})}\n\n"
         
-        if USE_MOCK or critic is None:
+        if USE_MOCK or critic_pipeline is None:
             await asyncio.sleep(1)
             if i == 0:
                  review = {"approved": False, "score": 5, "feedback": "Arquivo inexistente citado.", "hallucinations": ["src/ghost_file.py"]}
@@ -139,10 +140,12 @@ async def run_analysis_generator(project_path_arg):
         else:
             loop = asyncio.get_event_loop()
             ctx = contextvars.copy_context()
-            review_func = lambda: critic.review(doc_text, project_path)
+            # Usando a pipeline hexagonal (.run em vez de .review)
+            review_func = lambda: critic_pipeline.run(doc_text, project_path)
             review = await loop.run_in_executor(None, ctx.run, review_func)
             
         # Rastreia tokens do Crítico
+        # Note: ReviewPipeline agora retorna dict compatível
         critic_usage = review.get("usage", {})
         critic_tokens = critic_usage.get("total_tokens", 0)
         if isinstance(critic_tokens, int):

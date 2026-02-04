@@ -8,7 +8,7 @@ from src.config import settings
 from src.utils.logger import logger, add_tokens, set_step
 
 class ReActAgent:
-    def __init__(self, model_name: str = "moonshotai/kimi-k2-thinking", tools: Dict[str, Callable] = None):
+    def __init__(self, model_name: str = "openai/gpt-4o-mini", tools: Dict[str, Callable] = None):
         api_key = os.getenv("OPENROUTER_API_KEY")
         if not api_key:
              # Se não houver chave, deixamos falhar apenas ao tentar chamar o LLM, 
@@ -51,12 +51,14 @@ Esquema 2 (Quando você terminar):
     "final_answer": "O resultado final ou documentação solicitada (em Português)"
 }}
 
-Regras:
-1. Você DEVE usar as ferramentas para coletar informações. Não alucine fatos.
-2. Se precisar pesquisar, use 'web_search'.
-3. Se precisar ler uma página, use 'scrape_page'.
-4. O 'action_input' deve ser uma string. Se a ferramenta espera um objeto complexo, serialize-o ou passe o caminho da string.
-5. Produza APENAS o JSON.
+Regras CRÍTICAS:
+1. Você NÃO tem memória de execuções anteriores. Você NÃO sabe nada sobre o projeto até ler os arquivos.
+2. Seu PRIMEIRO passo DEVE ser usar 'read_project_files' ou 'list_dir' para explorar o código.
+3. Você DEVE usar as ferramentas para coletar informações. Não alucine fatos.
+4. Se precisar pesquisar, use 'web_search'.
+5. O 'action_input' deve ser uma string.
+6. Você DEVE fornecer ou uma 'action' ou uma 'final_answer'. Nunca forneça apenas o 'thought'.
+7. Produza APENAS o JSON válido.
 """
 
     def _parse_json_response(self, response: str) -> Dict[str, Any]:
