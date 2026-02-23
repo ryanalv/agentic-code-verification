@@ -110,7 +110,14 @@ async def run_analysis_generator(project_path_arg):
                 ctx = contextvars.copy_context()
                 analyze_func = lambda: analyze_codebase(project_path, project_name, current_feedback)
                 result = await loop.run_in_executor(None, ctx.run, analyze_func)
-                doc_text = result.get("final_answer", "")
+                
+                # Garantir que doc_text seja string, mesmo se o agente retornar JSON/Dict
+                final_answer = result.get("final_answer", "")
+                if isinstance(final_answer, (dict, list)):
+                    doc_text = json.dumps(final_answer, ensure_ascii=False, indent=2)
+                else:
+                    doc_text = str(final_answer)
+                
                 steps = result.get("steps", 0)
                 usage = result.get("usage", {})
              except Exception as e:
@@ -159,6 +166,29 @@ async def run_analysis_generator(project_path_arg):
         yield f"data: {json.dumps({'type': 'metrics', 'score': review['score'], 'hallucinations': len(review['hallucinations']), 'approved': review['approved'], 'total_tokens': current_tokens.get()})}\n\n"
         
         if review['approved']:
+            # Salvar documentação localmente
+            try:
+                docs_dir = os.path.join(PROJECT_ROOT, "generated_docs")
+                os.makedirs(docs_dir, exist_ok=True)
+                
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                # Sanitizar nome do projeto para uso em arquivo
+                safe_project_name = "".join([c for c in project_name if c.isalnum() or c in (' ', '-', '_')]).strip().replace(" ", "_")
+                filename = f"{safe_project_name}_{timestamp}.md"
+                file_path = os.path.join(docs_dir, filename)
+                
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(doc_text)
+                    
+                save_msg = f"Documentação salva em: generated_docs/{filename}"
+                logger.info(save_msg)
+                yield f"data: {json.dumps({'type': 'success', 'message': save_msg})}\n\n"
+                
+            except Exception as e:
+                err_msg = f"Erro ao salvar arquivo local: {e}"
+                logger.error(err_msg)
+                yield f"data: {json.dumps({'type': 'warning', 'message': err_msg})}\n\n"
+
             yield f"data: {json.dumps({'type': 'success', 'message': 'Documentação APROVADA pelo Crítico!'})}\n\n"
             yield f"data: {json.dumps({'type': 'final_doc', 'content': doc_text})}\n\n"
             break

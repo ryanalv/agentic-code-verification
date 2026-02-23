@@ -1217,3 +1217,1745 @@ export GOOGLE_APPLICATION_CREDENTIALS=":6379}
 2026-02-04 11:18:13,339 | INFO     | Passo: Round 1 - Critic     | Tokens: 54973  | Adapter: Iniciando revisão hierárquica via PraisonAI...
 2026-02-04 11:19:10,799 | INFO     | Passo: Round 1 - Critic     | Tokens: 54973  | Caso de Uso Finalizado. Aprovado: True, Nota: 8.222
 2026-02-04 11:19:10,801 | INFO     | Passo: Round 1 - Critic     | Tokens: 54973  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-05 10:25:52,142 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 10:25:52,145 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-05 10:25:52,147 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-05 10:25:52,148 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-05 10:25:52,149 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-05 10:25:52,150 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-05 10:25:52,152 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-05 10:25:52,958 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-05 10:25:57,532 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 919    | Passo 1 Saída: {
+    "thought": "O primeiro passo é ler os arquivos do projeto para entender sua estrutura e funcionamento.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Transicrição\\transcricao_longa-v2.0"
+}
+2026-02-05 10:25:57,532 | INFO     | Passo: Round 1 - Analyst    | Tokens: 919    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 10:25:58,031 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 919    | Observação: --- Arquivo: .gitignore ---
+# =============================================================================
+# transcricao_longa — .gitignore
+# =========================================================...
+2026-02-05 10:27:25,336 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 56165  | Passo 2 Saída: {
+    "thought": "Li todos os arquivos do projeto e agora vou compilar as informações para gerar a documentação técnica desejada.",
+    "final_answer": "# Documentação Técnica do Projeto Transcrição Longa\n\n## Visão Geral do Projeto\nO **Transcrição Longa** é um pipeline modular destinado à transcrição de audiências judiciais longas em Português Brasileiro. Utilizando **Google Speech-to-Text** (Chirp 3) e **Gemini 2.5 Pro** para pós-processamento, o sistema permite o envio de vídeos para transcrição com recursos de diarização e revisão automatizada. O projeto tem como objetivo otimizar o processo de transcrição e garantir que as transcrições sejam precisas e de alta qualidade.\n\n### Funcionalidades Principais\n- Recepção de vídeos e criação de jobs para transcrição.\n- Divisão de vídeos em chunks para processamento paralelo.\n- Transcrição de áudio utilizando tecnologia de STT.\n- Revisão e identificação de falantes com Gemini.\n- Geração de resumos estruturados.\n- Limpeza automática de artefatos temporários.\n\n### Contexto de Negócio\nNo sistema judiciário, a transcrição de audiências é uma tarefa crítica e que demanda precisão. O **Transcrição Longa** busca facilitar essa tarefa, permitindo que a transcrição seja realizada de forma mais eficaz, reduzindo o tempo e aumentando a qualidade das transcrições disponíveis para consulta e revisão.\n\n## Tecnologias e Dependências\n### Principais Tecnologias\n- **Linguagem de Programação**: Python 3.11+\n- **Frameworks e Bibliotecas**:\n  - `google-cloud-speech>=2.20.0`\n  - `google-cloud-storage>=2.10.0`\n  - `dramatiq[redis]>=1.15.0`\n  - `redis>=4.5.0`\n  - `python-dotenv>=1.0.0`\n  - `pymongo>=4.5.0` (opcional)\n\n### Dependências\n- **FFmpeg**: Necessário para o processamento de vídeo.\n- **Redis**: Utilizado para gerenciamento de filas com Dramatiq.\n- **Google Cloud**: APIs para Speech-to-Text e armazenamento em Cloud Storage.\n\n## Arquitetura do Sistema\nA arquitetura do **Transcrição Longa** é baseada no padrão **Arquitetura Hexagonal (Ports and Adapters)**, que isola a lógica de negócios da infraestrutura. Essa abordagem permite que diferentes adaptadores sejam trocados sem impacto na lógica principal, facilitando a manutenção e testes.\n\n### Estrutura de Pastas\n```\ntranscricao_longa/\n├── src/\n│   ├── dominio/           # Entidades e regras de negocio\n│   ├── aplicacao/         # Casos de uso e portas (interfaces)\n│   ├── infraestrutura/     # Adaptadores (implementações concretas)\n│   ├── workers/           # Workers Dramatiq\n│   └── filas/             # Configuração de filas Dramatiq\n├── main.py                # Entry point CLI\n├── requirements.txt\n└── .env                   # Configuração do ambiente\n```\n\n## Fluxo de Execução com Diagrama\nO fluxo de execução do sistema segue o seguinte caminho desde o ponto de entrada até a lógica principal:\n\n1. **Entrada**: O vídeo é recebido pelo worker de entrada.\n2. **Chunking**: O vídeo é dividido em partes menores (chunks).\n3. **STT**: Cada chunk é enviado para transcrição.\n4. **Revisão Diarização**: O texto transcrito é revisado e os falantes são identificados.\n5. **Revisão Final**: A transcrição é revisada mais uma vez para correções finais.\n6. **Sumarização**: Geração de resumo da audiência.\n7. **Salvamento**: Os resultados finais e logs são salvos.\n8. **Limpeza**: Remoção de arquivos temporários.\n\n```mermaid\ngraph TD;\n  A[Entrada] -->|Submete vídeo| B[Chunking];\n  B -->|Divide vídeo| C[STT];\n  C -->|Transcreve áudio| D[Revisão Diarização];\n  D -->|Identifica falantes| E[Revisão Final];\n  E -->|Correções finais| F[Sumarização];\n  F -->|Gera resumo| G[Salvamento];\n  G -->|Salva resultados| H[Limpieza];\n  H -->|Remove temporários| I[Finalização];\n```\n\n## Componentes Chave\n### 1. Worker de Entrada\n- **Nome**: `processar_entrada`\n- **Responsabilidade**: Este worker recebe o vídeo inicial e cria um job para transcrição.\n- **Interfaces Públicas**:\n  - `def processar_entrada(video_path: str, force_restart: bool = False) -> None`\n- **Interações**: Interage diretamente com o Orquestrador para submeter um vídeo.\n\n### 2. Worker de Chunking\n- **Nome**: `processar_chunking_job`\n- **Responsabilidade**: Divide o vídeo em partes menores (chunks) para processamento.\n- **Interfaces Públicas**:\n  - `def processar_chunking_job(job_id: str) -> None`\n- **Interações**: Inicia o processamento de STT após completar a divisão.\n\n### 3. Worker de STT\n- **Nome**: `processar_stt`\n- **Responsabilidade**: Transcreve os chunks de áudio utilizando a API de STT.\n- **Interfaces Públicas**:\n  - `def processar_stt(job_id: str) -> None`\n- **Interações**: Envia os resultados da transcrição para o worker de revisão.\n\n### 4. Worker de Revisão Diarização\n- **Nome**: `processar_revisao_diarizacao`\n- **Responsabilidade**: Revise a transcrição e identifique falantes.\n- **Interfaces Públicas**:\n  - `def processar_revisao_diarizacao(job_id: str) -> None`\n- **Interações**: Envia resultados para o próximo worker na cadeia de revisão.\n\n### 5. Orquestrador\n- **Nome**: `Orquestrador`\n- **Responsabilidade**: Gerenciar o fluxo de dados entre os workers e coordenar a execução do pipeline.\n- **Interfaces Públicas**:\n  - `def submeter_video(video_path: str, job_id: str = None, case_id: str = None, force_restart: bool = False) -> str`\n- **Interações**: Todos os workers se comunicam através dele para realizar seus processos.\n\n## Fluxo de Dados\n- Os dados são recebidos por meio do worker de entrada onde é criado um job relacionado ao vídeo.\n- A transcrição é gerada em várias etapas: chunking, STT, revisão, e limpar dados temporários após a execução.\n- Todas as interações são registradas em um banco de dados SQLite para rastreamento e monitoramento.\n\n## Configuração e Uso\n### Pré-requisitos\n- Python 3.11+\n- FFmpeg\n- Redis\n- Google Cloud SDK\n\n### Instalação\n1. Clone este repositório:\n   ```bash\n   git clone <repository-url>\n   cd transcricao_longa\n   ```\n2. Crie e ative um ambiente virtual:\n   ```bash\n   python -m venv .venv\n   source .venv/bin/activate  # Linux/Mac\n   .venv\\Scripts\\activate  # Windows\n   ```\n3. Instale as dependências:\n   ```bash\n   pip install -r requirements.txt\n   ```\n4. Configure as variáveis de ambiente usando o arquivo `.env`.\n5. Execute o script principal:\n   ```bash\n   python main.py --video /caminho/video.mp4\n   ```\n\n## Dependências Entre Módulos\n```mermaid\ngraph TD;\n  A[Workers] -->|Chama| B[Orquestrador];\n  B -->|Coordena| C[Chunking];\n  C --> D[STT];\n  D --> E[Revisão Diarização];\n  E --> F[Revisão Final];\n  F --> G[Sumarização];\n  G --> H[Salvamento];\n  H --> I[Limpieza];\n```\n\n---\nEssa documentação oferece um entendimento detalhado da arquitetura e funcionamento do projeto **Transcrição Longa**, abrangendo suas principais responsabilidades, interações e fluxos de dados.",
+    "final_answer_format": "markdown"
+}
+2026-02-05 10:27:25,338 | INFO     | Passo: Round 1 - Analyst    | Tokens: 56165  | Agente alcançou a resposta final.
+2026-02-05 10:27:25,341 | INFO     | Passo: Round 1 - Analyst    | Tokens: 55246  | Analista finalizou em 2 passos. Tokens estimados bloco: 55246
+2026-02-05 10:27:25,342 | INFO     | Passo: Round 1 - Critic     | Tokens: 55246  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-05 10:27:25,342 | INFO     | Passo: Round 1 - Critic     | Tokens: 55246  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-05 10:28:18,004 | INFO     | Passo: Round 1 - Critic     | Tokens: 55246  | Caso de Uso Finalizado. Aprovado: False, Nota: 7.67
+2026-02-05 10:28:18,006 | INFO     | Passo: Round 1 - Critic     | Tokens: 55246  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-05 10:28:18,008 | INFO     | Passo: Round 2 - Analyst    | Tokens: 55246  | Analista está lendo arquivos e gerando documentação...
+2026-02-05 10:28:18,010 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 55246  | Loaded API Key: sk-or-v1-9...
+2026-02-05 10:28:18,426 | INFO     | Passo: Round 2 - Analyst    | Tokens: 55246  | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-05 10:28:20,331 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 56192  | Passo 1 Saída: {
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Transicrição\\transcricao_longa-v2.0"
+}
+2026-02-05 10:28:20,332 | INFO     | Passo: Round 2 - Analyst    | Tokens: 56192  | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 10:28:20,361 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 56192  | Observação: --- Arquivo: .gitignore ---
+# =============================================================================
+# transcricao_longa — .gitignore
+# =========================================================...
+2026-02-05 10:29:32,823 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 111099 | Passo 2 Saída: {
+    "thought": "Concluí a leitura dos arquivos do projeto e agora irei organizar as informações extraídas para compor a documentação técnica solicitada.",
+    "final_answer": "# Documentação Técnica do Projeto Transcrição Longa\n\n## Visão Geral do Projeto\nO projeto **Transcrição Longa** é um sistema modular desenvolvido para a transcrição de audiências judiciais longas em Português Brasileiro utilizando a API do Google Speech-to-Text (Chirp 3) e processamento adicional através do Gemini (2.5 Pro). O propósito principal é fornecer uma solução eficiente e confiável para transcrever, revisar e armazenar o conteúdo de audiências judiciais, garantindo a precisão e o contexto das falas. \n\n### Funcionalidades Principais\n- Transcrição de áudio de vídeo em texto utilizando STT.\n- Revisão e diarização do texto transcrito.\n- Armazenamento e manipulação de arquivos de transcrição e resumos.\n- Integração com filas de processamento utilizando Dramatiq e Redis.\n- Monitoramento do status de jobs de transcrição e revisão.\n\n### Contexto de Negócio\nEste sistema foi desenvolvido para atender demandas judiciais, onde a transcrição fiel dos diálogos é crucial para registros legais, pesquisas e processos de revisão.\n\n## Tecnologias e Dependências\n- **Linguagem de programação**: Python 3.11+\n- **Framework**: Dramatiq para gerenciamento de tarefas assíncronas.\n- **Banco de Dados**: SQLite para persistência de jobs e eventos.\n- **API GCP**: Google Cloud Speech para transcrição.\n- **Outras Bibliotecas**:\n  - google-cloud-speech>=2.20.0\n  - google-cloud-storage>=2.10.0\n  - google-genai>=0.5.0\n  - redis>=4.5.0\n  - python-dotenv>=1.0.0\n\n## Arquitetura do Sistema\nO sistema segue a arquitetura **Hexagonal (Ports and Adapters)**, onde a lógica de negócio é separada das implementações de infraestrutura. Isso permite uma fácil adaptação a diferentes tecnologias de backend, como bancos de dados e serviços de nuvem. \n\n### Padrões de Design Utilizados\n- **Factory Pattern** para criação de instâncias de adaptadores e orquestradores.\n- **Dependency Injection** para injeção de dependências nos serviços.\n\n## Fluxo de Execução com Diagrama\nO fluxo de execução do sistema inicia com o recebimento de um vídeo, seguido pela criação de um job que é submetido para processamento em diferentes etapas, desde o chunking até a limpeza de artefatos.\n\n```mermaid\nflowchart TD\n    A[Entrada: Caminho do Vídeo] --> B[Processamento: Criar Job]\n    B --> C[Chunking]\n    C --> D[Transcrição: STT]\n    D --> E[Revisão Diarização]\n    E --> F[Revisão Final]\n    F --> G[Salvar Resultados]\n    G --> H[Limpeza]\n```  \n\n1. **Entrada**: Recebe o caminho para o vídeo.\n2. **Processamento**: Cria um job no repositório.\n3. **Chunking**: Divide o vídeo em partes menores.\n4. **Transcrição (STT)**: Realiza a transcrição do áudio.\n5. **Revisão Diarização**: Realiza a revisão e identificação de falantes.\n6. **Revisão Final**: Revisão final para correção de incidentes.\n7. **Salvar Resultados**: Salva as transcrições finais e resumos.\n8. **Limpeza**: Limpa arquivos temporários.\n\n## Componentes Chave\n### Trabalho (Job)\n- **Responsabilidade**: Gerencia o estado da transcrição de um vídeo.\n- **Interfaces Públicas**: `submeter_video`, `executar_pipeline`, `executar_limpeza`.\n\n### Adaptadores (Ex: FFmpeg)\n- **Responsabilidade**: Manipulação de vídeos (chunking, extração de áudio).\n- **Interfaces Públicas**: `planejar_chunks`, `extrair_audio`, `extrair_video`.\n\n### Workers (Dramatiq)\n- **Entrada**: Processa novos vídeos e cria jobs.\n- **Chunking**: Divide vídeos para transcrição.\n- **STT**: Executa a transcrição de áudio.\n\n## Fluxo de Dados\nOs dados fluem através do sistema da seguinte forma:\n1. **Entrada**: Caminho do vídeo é recebido pelo worker de entrada.\n2. **Job**: Um job é criado e armazenado no banco de dados SQLite.\n3. **Chunking**: O vídeo é dividido em partes, e cada parte é processada individualmente.\n4. **STT**: As partes de áudio são enviadas para a API de transcrição.\n5. **Revisão e Diarização**: O texto retornado é processado e revisado.\n6. **Saída**: Transcrições e resumizações são salvas nos diretórios apropriados.\n\n## Configuração e Uso\n### Instruções de Configuração\n1. **Clone o repositório**:\n   ```bash\ngit clone <repo>\ncd transcricao_longa\n```\n2. **Crie um ambiente virtual**:\n   ```bash\npython -m venv .venv\nsource .venv/bin/activate\n```\n3. **Instale as dependências**:\n   ```bash\npip install -r requirements.txt\n```\n4. **Inicie o Redis** (recomendado via Docker):\n   ```bash\ndocker run -d --name redis -p 6379:6379 redis:alpine\n```\n5. **Configure variáveis de ambiente**:\n   ```bash\ncp example.env .env\n# Edite .env com suas configurações\n```\n\n## Dependências Entre Módulos\n```mermaid\ngraph TD\n    A[Entrada] --> B[Chunking]\n    B --> C[STT]\n    C --> D[Revisão Diarização]\n    D --> E[Revisão Final]\n    E --> F[Salvamento]\n    F --> G[Limpeza]\n```  \n\n1. **Entrada** depende de **Chunking**.\n2. **Chunking** depende de **STT**.\n3. **STT** depende de **Revisão Diarização**.\n4. **Revisão Diarização** e **Revisão Final** se interagem.\n5. **Salvamento** depende de **Revisão Final**.\n6. **Limpeza** é a última etapa após o salvamento.\n\nAs dependências garantem que cada etapa do processamento ocorra na ordem correta, assegurando a integridade dos dados e resultados.\n\n---\n\nEssa documentação está estruturada para fornecer clareza e facilitar o entendimento do sistema aos desenvolvedores envolvidos no projeto e novos colaboradores. Detalhes sobre cada componente, fluxo de dados e configuração garantem que o sistema seja adaptável e fácil de usar."
+}
+2026-02-05 10:29:32,823 | INFO     | Passo: Round 2 - Analyst    | Tokens: 111099 | Agente alcançou a resposta final.
+2026-02-05 10:29:32,825 | INFO     | Passo: Round 2 - Analyst    | Tokens: 110153 | Analista finalizou em 2 passos. Tokens estimados bloco: 54907
+2026-02-05 10:29:32,825 | INFO     | Passo: Round 2 - Critic     | Tokens: 110153 | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-05 10:29:32,825 | INFO     | Passo: Round 2 - Critic     | Tokens: 110153 | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-05 10:30:06,409 | INFO     | Passo: Round 2 - Critic     | Tokens: 110153 | Caso de Uso Finalizado. Aprovado: True, Nota: 8.333333333333334
+2026-02-05 10:30:06,411 | INFO     | Passo: Round 2 - Critic     | Tokens: 110153 | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-05 13:26:18,307 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 13:26:18,316 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-05 13:26:18,320 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-05 13:26:18,324 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-05 13:26:18,330 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-05 13:26:18,332 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-05 13:26:18,354 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-05 13:26:18,919 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-05 13:26:21,813 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 923    | Passo 1 Saída: {
+    "thought": "Meu primeiro passo é ler os arquivos do projeto para coletar informações e entender a estrutura do código.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Transicrição\\transcricao_longa-v2.0"
+}
+2026-02-05 13:26:21,813 | INFO     | Passo: Round 1 - Analyst    | Tokens: 923    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 13:26:21,855 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 923    | Observação: --- Arquivo: .gitignore ---
+# =============================================================================
+# transcricao_longa — .gitignore
+# =========================================================...
+2026-02-05 13:27:40,179 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 56046  | Passo 2 Saída: {
+    "thought": "Concluí a leitura dos arquivos do projeto. Agora, posso começar a organizar as informações e gerar a documentação técnica com base nos dados coletados.",
+    "final_answer": "# Documentação Técnica do Projeto: transcricao_longa\n\n## Visão Geral do Projeto\nO projeto **transcricao_longa** é um pipeline modular desenvolvido para a transcrição de audiências judiciais longas em Português Brasileiro, utilizando o **Google Speech-to-Text Chirp 3** e pós-processamento com **Gemini 2.5 Pro**. O sistema possui uma arquitetura hexagonal que separa a lógica de negócios da infraestrutura, promovendo uma manutenção fácil e o uso de microsserviços. O fluxo de trabalho abrange desde a entrada de vídeos até a limpeza de arquivos temporários gerados durante o processo.\n\n### Funcionalidades Principais\n- Transcrição de vídeos longos com reconhecimento de fala inteligente.\n- Revisão e identificação de falantes a partir da transcrição.\n- Sumarização dos principais pontos abordados nas audiências.\n- Monitoramento de jobs de transcrição.\n\n### Contexto de Negócio\nO uso de transcrições automáticas em audiências judiciais visa melhorar a acessibilidade e a análise de procedimentos legais, aumentando a eficiência tanto para advogados quanto para o sistema judiciário em geral.\n\n## Tecnologias e Dependências\n- **Python**: 3.11+\n- **Frameworks e Bibliotecas**:\n  - google-cloud-speech>=2.20.0\n  - google-cloud-storage>=2.10.0\n  - google-genai>=0.5.0\n  - dramatiq[redis]>=1.15.0\n  - redis>=4.5.0\n  - python-dotenv>=1.0.0\n  - pymongo>=4.5.0 (opcional)\n\n## Arquitetura do Sistema\nA arquitetura segue o padrão **Hexagonal (Ports and Adapters)**, onde a lógica de domínio é desacoplada das implementações de infraestrutura. Os principais módulos organizacionais incluem:\n- **dominio/**: Contém entidades e regras de negócio.\n- **aplicacao/**: Gerencia casos de uso e interfaces (portas) para comunicação com adaptadores.\n- **infraestrutura/**: Contém implementações concretas de adaptadores, incluindo a persistência de dados e integração com serviços externos.\n- **workers/**: Tarefas assíncronas que processam a transcrição utilizando **Dramatiq** e **Redis** para gerenciamento de filas.\n\n### Diagrama Mermaid da Arquitetura\n```mermaid\ngraph TD;\n    A[Cliente] -->|Solicitação| B[Entrada]\n    B --> C[Chunking]\n    C --> D[STT]\n    D --> E[Revisão Diarização]\n    E --> F[Revisão Final]\n    F --> G[Sumarização]\n    G --> H[Salvamento]\n    H --> I[Limpeza]\n    I --> J[Feedback ao Cliente]\n```\n\n## Fluxo de Execução com Diagrama\nO fluxo de execução do sistema se dá pelo seguinte caminho:\n1. **Entrada**: Um vídeo é recebido e um job é criado.\n2. **Chunking**: O vídeo é dividido em partes menores para facilitar a transcrição.\n3. **STT (Speech-to-Text)**: O áudio de cada parte é transcrito usando o serviço de reconhecimento de fala da Google.\n4. **Revisão Diarização**: O texto transcrito é revisado e os falantes são identificados.\n5. **Revisão Final**: Uma revisão adicional é feita para garantir a qualidade da transcrição.\n6. **Sumarização**: Um resumo é gerado a partir da transcrição final.\n7. **Salvamento**: Os resultados são salvos em arquivos locais.\n8. **Limpeza**: Arquivos temporários são removidos para liberar espaço.\n\n## Componentes Chave\n- **Entrada**: Recebe vídeos e cria um novo job.\n  - **Métodos**: `processar_entrada(video_path: str, force_restart: bool = False)`\n  - **Interações**: Chama a tarefa de chunking após registrar o job.\n\n- **Chunking**: Divide o vídeo em partes menores.\n  - **Métodos**: `processar_chunking(job_id: str)`\n  - **Interações**: Chama a tarefa de STT após concluir.\n\n- **STT**: Realiza a transcrição dos áudios.\n  - **Métodos**: `processar_stt(job_id: str)`\n  - **Interações**: Envia os resultados para revisão.\n\n- **Revisão Diarização**: Revê as transcrições e identifica falantes.\n  - **Métodos**: `processar_revisao_diarizacao(job_id: str)`\n  - **Interações**: Chama a tarefa final de revisão.\n\n- **Revisão Final**: Garante a qualidade da transcrição.\n  - **Métodos**: `processar_revisao_final(job_id: str)`\n  - **Interações**: Envia o job para sumarização.\n\n- **Sumarização**: Gera um resumo a partir da transcrição final.\n  - **Métodos**: `processar_sumarizacao(job_id: str)`\n  - **Interações**: Chama a limpeza após salvamento.\n\n## Fluxo de Dados\nOs dados fluem através do sistema da seguinte maneira:\n1. O vídeo é recebido através da função `processar_entrada`.\n2. A função `processar_chunking_job` divide o vídeo em chunks e salva informações sobre cada parte.\n3. O áudio é enviado para a função `processar_stt`, onde ocorre a transcrição.\n4. As transcrições são passadas para `processar_revisao_diarizacao` para identificação dos falantes.\n5. Após a revisão, chamamos `processar_revisao_final` para verificar a qualidade final da transcrição.\n6. O resultado final é enviado para `processar_sumarizacao` que gera o resumo.\n7. Finalmente, `processar_salvamento` armazena os resultados e invoca `processar_limpeza` para manter a organização.\n\n## Configuração e Uso\n### Pré-requisitos\n- Python 3.11+\n- FFmpeg e FFprobe instalados e no PATH\n- Redis para gerenciamento de filas (opcional, mas recomendado para produção)\n\n### Instalação\n1. Clone o repositório:\n   ```bash\n   git clone <repo>\n   cd transcricao_longa\n   ```\n2. Crie um ambiente virtual:\n   ```bash\n   python -m venv .venv\n   source .venv/bin/activate  # Para Linux/Mac\n   .venv\\Scripts\\activate  # Para Windows\n   ```\n3. Instale as dependências:\n   ```bash\n   pip install -r requirements.txt\n   ```\n4. Configure as variáveis de ambiente:\n   ```bash\n   cp example.env .env\n   # Edite .env com suas configurações\n   ```\n\n### Uso\nPara executar a transcrição direta de um vídeo:\n```bash\npython main.py --video \"/caminho/video.mp4\"\n```\nPara iniciar workers de processamento:\n```bash\n.\\\\start_workers.ps1\n```\n\n## Dependências Entre Módulos\n### Diagrama de Dependências\n```mermaid\ngraph TD;\n    A[Entrada] --> B[Chunking];\n    B --> C[STT];\n    C --> D[Revisão Diarização];\n    D --> E[Revisão Final];\n    E --> F[Sumarização];\n    F --> G[Salvamento];\n    G --> H[Limpeza];\n```\n\n**Considerações Finais**\nEsse projeto foi desenvolvido para ser extensível e modular, o que permite a adição de novas funcionalidades e melhorias na interface com novos serviços de transcrição e revisão conforme necessário. Para mais informações ou para contribuir, consulte o repositório oficial."
+}
+2026-02-05 13:27:40,183 | INFO     | Passo: Round 1 - Analyst    | Tokens: 56046  | Agente alcançou a resposta final.
+2026-02-05 13:27:40,194 | INFO     | Passo: Round 1 - Analyst    | Tokens: 55123  | Analista finalizou em 2 passos. Tokens estimados bloco: 55123
+2026-02-05 13:27:40,197 | INFO     | Passo: Round 1 - Critic     | Tokens: 55123  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-05 13:27:40,198 | INFO     | Passo: Round 1 - Critic     | Tokens: 55123  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-05 13:28:22,973 | INFO     | Passo: Round 1 - Critic     | Tokens: 55123  | Caso de Uso Finalizado. Aprovado: False, Nota: 6.555555555555555
+2026-02-05 13:28:22,977 | INFO     | Passo: Round 1 - Critic     | Tokens: 55123  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-05 13:28:22,978 | INFO     | Passo: Round 2 - Analyst    | Tokens: 55123  | Analista está lendo arquivos e gerando documentação...
+2026-02-05 13:28:22,982 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 55123  | Loaded API Key: sk-or-v1-9...
+2026-02-05 13:28:23,401 | INFO     | Passo: Round 2 - Analyst    | Tokens: 55123  | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-05 13:28:25,412 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 56114  | Passo 1 Saída: {
+    "thought": "Vou começar lendo os arquivos do projeto para entender seu conteúdo e funcionalidade.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Transicrição\\transcricao_longa-v2.0"
+}
+2026-02-05 13:28:25,412 | INFO     | Passo: Round 2 - Analyst    | Tokens: 56114  | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 13:28:25,445 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 56114  | Observação: --- Arquivo: .gitignore ---
+# =============================================================================
+# transcricao_longa — .gitignore
+# =========================================================...
+2026-02-05 13:29:39,182 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 110964 | Passo 2 Saída: {
+    "thought": "Terminei de ler os arquivos do projeto e agora posso começar a compilar a documentação técnica.",
+    "final_answer": "# Documentação Técnica do Projeto Transcrição Longa\n\n## Visão Geral do Projeto\nO projeto **Transcrição Longa** é um sistema modular destinado à transcrição de audiências judiciais em português brasileiro. Utiliza a **API Google Speech-to-Text (Chirp 3)** para transcrever o áudio das audiências e um sistema de pós-processamento **Gemini 2.5 Pro** para revisão e sumarização dos textos transcritos. Ele facilita o uso em contextos jurídicos, proporcionando uma interface eficiente para a integração de vídeos a serem transcritos e revisados.\n\n### Funcionalidades Principais\n- Transcrição de áudio de vídeos longos.\n- Revisão e identificação de falantes com o modelo Gemini.\n- Suportado por filas de tarefas com **Dramatiq + Redis**.\n- Integração fácil com outros sistemas via CLI ou API de mensagem.\n\n### Contexto de Negócio\nO projeto atende à necessidade de automatizar e agilizar o processo de transcrição e revisão de audiências, reduzindo o tempo e os custos associados em um ambiente jurídico, onde a precisão e a eficiência na produção de documentos são cruciais.\n\n## Tecnologias e Dependências\n- **Python 3.11+**\n- **Google Cloud** (Speech-to-Text, Storage)\n- **Dramatiq** para gerenciamento de tarefas em fila\n- **Redis** como broker de filas\n- **SQLite** para persistência de dados\n- **FFmpeg** para processamento de mídia\n- **Bibliotecas**: `google-cloud-speech>=2.20.0`, `dramatiq[redis]>=1.15.0`, `redis>=4.5.0`, `python-dotenv>=1.0.0`\n\n## Arquitetura do Sistema\nO projeto segue a **Arquitetura Hexagonal**, onde as camadas de domínio, aplicação e infraestrutura são separadas e interagem através de interfaces. A estrutura do projeto é organizada em diretórios que contêm:\n- `src/dominio`: Entidades e regras de negócio.\n- `src/aplicacao`: Casos de uso e implementações das interfaces.\n- `src/infrastructure`: Adaptadores concretos que conectam a aplicação às APIs externas e serviços.\n- `src/workers`: Microsserviços que realizam o processamento de tarefas em filas.\n\n## Fluxo de Execução com Diagrama\nO fluxo de execução do sistema segue a seguinte sequência:\n1. **Entrada**: O sistema recebe um vídeo e cria um job no repositório.\n2. **Chunking**: O vídeo é dividido em segmentos menores para otimizar a transcrição.\n3. **STT**: Os segmentos de áudio são enviados para transcrição.\n4. **Revisão e Diarização**: O texto transcrito é revisado e os falantes são identificados.\n5. **Salvamento**: Os resultados são armazenados em arquivos de saída.\n6. **Limpeza**: Artefatos temporários são removidos após o processamento.\n\n```mermaid\nflowchart TD;\n    A[Entrada] --> B[Chunking];\n    B --> C[STT];\n    C --> D[Revisão e Diarização];\n    D --> E[Salvamento];\n    E --> F[Limpieza];\n```\n\n## Componentes Chave\n### 1. Worker de Entrada (`entrada.py`)\n- **Responsabilidade**: Gerencia a entrada dos vídeos, cria jobs e inicia o fluxo de trabalho.\n- **Interfaces Públicas**: `processar_entrada(video_path: str, force_restart: bool)`.\n\n### 2. Worker de Chunking (`chunking.py`)\n- **Responsabilidade**: Divide vídeos longos em partes menores (chunks) para processamento.\n- **Interfaces Públicas**: `processar_chunking_job(job_id: str)`.\n\n### 3. Worker de STT (`stt.py`)\n- **Responsabilidade**: Realiza a transcrição das partes de áudio utilizando a API do Google STT.\n- **Interfaces Públicas**: `processar_stt(job_id: str)`.\n\n### 4. Worker de Revisão e Diarização (`revisao_diarizacao.py`)\n- **Responsabilidade**: Revê a transcrição e identifica os falantes com o modelo Gemini.\n- **Interfaces Públicas**: `processar_revisao_diarizacao(job_id: str)`.\n\n### 5. Worker de Salvamento (`salvamento.py`)\n- **Responsabilidade**: Salva os resultados finais da transcrição e limpeza.\n- **Interfaces Públicas**: `processar_salvamento(job_id: str)`.\n\n## Fluxo de Dados\nOs dados fluem da seguinte maneira:\n1. **Entrada**: O usuário insere o caminho do vídeo e cria um job no repositório, que é persistido no banco de dados SQLite.\n2. **Processamento** de cada segmento de áudio com o serviço de STT é solicitado e após a transcrição está disponível para revisão.\n3. **Revisão**: Os dados são passados para o worker de revisão, onde são identificados os falantes e corrigidos os textos.\n4. **Saída**: As transcrições finais e resumos são salvos em arquivos na estrutura de diretórios do projeto.\n5. **Limpeza**: O sistema remove arquivos temporários após a conclusão do job.\n\n## Configuração e Uso\n### Pré-requisitos\n- Python 3.11 ou superior.\n- FFmpeg e FFprobe instalados e no PATH.\n- Redis para gerenciamento de filas.\n- Credenciais de autenticação do Google Cloud com permissões para STT e armazenamento.\n\n### Instalação\n1. Clone o repositório.\n2. Crie um ambiente virtual e ative-o.\n3. Instale as dependências via `pip install -r requirements.txt`.\n4. Configure as variáveis de ambiente no arquivo `.env`.\n\n### Execução\nPara enviar um vídeo para transcrição:\n```bash\npython main.py --video \"/caminho/video.mp4\"\n```\n\nPara consultar o status do job:\n```bash\npython main.py --status \"job-id-especifico\"\n```\n\n## Dependências Entre Módulos\n```mermaid\ngraph TD;\n    A[Entrada] --> B[Chunking];\n    B --> C[STT];\n    C --> D[Revisão];\n    D --> E[Salvamento];\n    E --> F[Limpieza];\n```"
+}
+2026-02-05 13:29:39,186 | INFO     | Passo: Round 2 - Analyst    | Tokens: 110964 | Agente alcançou a resposta final.
+2026-02-05 13:29:39,196 | INFO     | Passo: Round 2 - Analyst    | Tokens: 109973 | Analista finalizou em 2 passos. Tokens estimados bloco: 54850
+2026-02-05 13:29:39,199 | INFO     | Passo: Round 2 - Critic     | Tokens: 109973 | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-05 13:29:39,201 | INFO     | Passo: Round 2 - Critic     | Tokens: 109973 | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-05 13:30:19,837 | INFO     | Passo: Round 2 - Critic     | Tokens: 109973 | Caso de Uso Finalizado. Aprovado: True, Nota: 8.625
+2026-02-05 13:30:19,842 | INFO     | Passo: Round 2 - Critic     | Tokens: 109973 | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-05 13:30:19,850 | INFO     | Passo: Round 2 - Critic     | Tokens: 109973 | Documentação salva em: generated_docs/transcricao_longa-v20_20260205_133019.md
+2026-02-05 13:37:26,408 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 13:37:26,410 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-05 13:37:26,412 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-05 13:37:26,413 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-05 13:37:26,414 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-05 13:37:26,415 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-05 13:37:26,423 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-05 13:37:26,872 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-05 13:37:29,375 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 925    | Passo 1 Saída: {
+    "thought": "Preciso ler os arquivos do projeto para entender seu propósito e funcionamento. Vou usar a função read_project_files.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Transicrição\\transcricao_longa-v2.0"
+}
+2026-02-05 13:37:29,376 | INFO     | Passo: Round 1 - Analyst    | Tokens: 925    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 13:37:29,408 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 925    | Observação: --- Arquivo: .gitignore ---
+# =============================================================================
+# transcricao_longa — .gitignore
+# =========================================================...
+2026-02-05 13:38:47,174 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 55934  | Passo 2 Saída: {
+    "thought": "Li todos os arquivos do projeto e agora posso compor a documentação técnica. Vou começar a estruturar as seções exigidas com base nas informações coletadas.",
+    "final_answer": "# Documentação Técnica - Pipeline de Transcrição Longa\n\n## Visão Geral do Projeto\n\nO projeto **Transcrição Longa** é um pipeline modular destinado à transcrição de audiências judiciais longas em português brasileiro. Utiliza tecnologia avançada de reconhecimento de fala, como *Google Speech-to-Text (Chirp 3)*, além de pós-processamento implementado com o *Gemini 2.5 Pro*. O sistema visa facilitar a transcrição e análise de vídeos de forma eficiente, permitindo a integração com diferentes fontes de dados e sistemas externos.\n\n### Funcionalidades Principais\n- **Processamento Assíncrono**: O sistema utiliza filas para processar vídeos em diferentes etapas, garantindo escalabilidade e eficiência.\n- **Reconhecimento de Fala**: Implementa tecnologia de reconhecimento de fala com suporte à diarização dos falantes.\n- **Revisão Textual**: O pipeline inclui etapas de revisão e correção, assegurando a qualidade da transcrição.\n- **Geração de Resumos**: Além da transcrição, o sistema gera resumos estruturados dos conteúdos transcritos.\n\n### Contexto de Negócio\nA transcrição de audiências judiciais é um requerimento crítico para o acompanhamento de processos legais, e a capacidade de automatizar esse processo não só acelera a produção de documentos legais como também aumenta a precisão e rastreabilidade de informações.\n\n## Tecnologias e Dependências\n- **Linguagem de Programação**: Python 3.11+\n- **Frameworks e Bibliotecas**:\n  - `dramatiq[redis]` >= 1.15.0\n  - `redis` >= 4.5.0\n  - `google-cloud-speech` >= 2.20.0\n  - `google-cloud-storage` >= 2.10.0\n  - `google-genai` >= 0.5.0\n  - `python-dotenv` >= 1.0.0\n  - `pymongo` (opcional) >= 4.5.0\n- **Ferramentas**:\n  - **FFmpeg**: Para processamento de áudio e vídeo.\n  - **Redis**: Para gerenciamento de filas e workers.\n\n## Arquitetura do Sistema\nA arquitetura do projeto é baseada no padrão **Arquitetura Hexagonal (Ports and Adapters)**. Isso assegura uma separação clara entre a lógica de negócio e a infraestrutura. O sistema é constituído por módulos que desempenham funções específicas, interagindo através de interfaces (portas).\n\n### Estrutura do Projeto\n```\ntranscricao_longa/\n├── src/\n│   ├── dominio/           # Entidades e regras de negócio\n│   ├── aplicacao/         # Casos de uso e interfaces\n│   ├── infraestrutura/     # Adaptadores e implementação\n│   ├── workers/           # Workers Dramatiq\n├── main.py                # Ponto de entrada do sistema\n├── requirements.txt       # Dependências\n└── example.env            # Exemplo de configuração de ambiente\n```\n\n## Fluxo de Execução com Diagrama\n### Passo a Passo da Execução\n1. **Recepção de Vídeo**: O sistema inicia a partir do ponto de entrada `main.py`, onde o vídeo é submetido para transcrição.\n2. **Criação de Job**: Um job é criado e armazenado na base de dados SQLite.\n3. **Chunking**: O vídeo é dividido em partes menores (chunks) para facilitar o processamento.\n4. **Transcrição STT**: Cada chunk de áudio é enviado para o serviço de transcrição do Google.\n5. **Revisão e Diarização**: Os resultados da transcrição são revisados e os falantes são identificados.\n6. **Salvamento**: Os resultados finais são armazenados em uma estrutura organizada.\n7. **Limpeza**: Os artefatos temporários são removidos para liberar espaço.\n\n```mermaid\nflowchart TD\n    A[Recepção de Vídeo] --> B[Criação de Job]\n    B --> C[Chunking]\n    C --> D[Transcrição STT]\n    D --> E[Revisão e Diarização]\n    E --> F[Salvamento]\n    F --> G[Limpieza]\n```\n\n## Componentes Chave\n### 1. **Orquestrador**\n- **Responsabilidade**: Coordena as etapas do pipeline.\n- **Interfaces Públicas**: `submeter_video`, `executar_pipeline`, `executar_chunking`, etc.\n\n### 2. **Workers**\n- **Responsabilidade**: Executam tarefas específicas como chunking, transcrição, revisão, e salvamento.\n- **Interfaces Públicas**: Variadas, dependendo da função (ex: `processar_chunking_job`).\n\n### 3. **Repositories (Repositório)**\n- **Responsabilidade**: Gerencia a persistência de dados usando SQLite.\n- **Interfaces Públicas**: `criar_job`, `atualizar_status`, `concluir_job`, etc.\n\n### 4. **Adapters**\n- **Responsabilidade**: Conectam a lógica de negócio aos serviços externos, como Google Cloud.\n- **Interfaces**: `VideoProcessingPort`, `SttPort`, etc.\n\n## Fluxo de Dados\nOs dados fluem através do sistema conforme a tabela abaixo:\n\n| Fluxo | Componente | Ação |\n|-------|------------|------|\n| 1 | `entrada.py` | Recebe o vídeo e cria um job. |\n| 2 | `chunking.py` | Divide o vídeo em partes menores. |\n| 3 | `stt.py` | Transcreve o áudio de cada parte. |\n| 4 | `revisao_diarizacao.py` | Realiza a revisão e identificação de falantes. |\n| 5 | `salvamento.py` | Salva os resultados finais. |\n\n## Configuração e Uso\n### Pré-requisitos\n- Python 3.11+\n- FFmpeg e FFprobe instalados\n- Redis em execução\n\n### Instalação\n1. Clone o repositório e navegue até o diretório do projeto:  \n   `git clone <repository_url>`  \n   `cd transcricao_longa`\n2. Crie um ambiente virtual e ative-o:\n   ```bash\n   python -m venv .venv\n   .venv\\Scripts\\activate  # Windows\n   source .venv/bin/activate  # Linux/Mac\n   ```\n3. Instale as dependências:\n   ```bash\n   pip install -r requirements.txt\n   ```\n4. Configure suas variáveis de ambiente em `.env`.\n\n### Execução\nPara executar o sistema:\n```bash\npython main.py --video \"/caminho/video.mp4\"\n```\n\n## Dependências Entre Módulos\nAbaixo estão as dependências entre os principais módulos do sistema:\n```mermaid\ngraph TD\n    A[Entrada] -->|submete| B[Chunking]\n    B -->|despacha| C[STT]\n    C -->|envia para| D[Revisão e Diarização]\n    D -->|salva em| E[Salvamento]\n    E -->|limpa| F[Limpieza]\n```\n\nEssa documentação oferece uma visão geral detalhada do sistema "                           ,  "Transcrição Longa"           					   : 0                                           }
+2026-02-05 13:38:47,176 | INFO     | Passo: Round 1 - Analyst    | Tokens: 55934  | Agente alcançou a resposta final.
+2026-02-05 13:38:47,180 | INFO     | Passo: Round 1 - Analyst    | Tokens: 55009  | Analista finalizou em 2 passos. Tokens estimados bloco: 55009
+2026-02-05 13:38:47,181 | INFO     | Passo: Round 1 - Critic     | Tokens: 55009  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-05 13:38:47,182 | INFO     | Passo: Round 1 - Critic     | Tokens: 55009  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-05 13:39:24,898 | INFO     | Passo: Round 1 - Critic     | Tokens: 55009  | Caso de Uso Finalizado. Aprovado: False, Nota: 7.5
+2026-02-05 13:39:24,900 | INFO     | Passo: Round 1 - Critic     | Tokens: 55009  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-05 13:39:24,901 | INFO     | Passo: Round 2 - Analyst    | Tokens: 55009  | Analista está lendo arquivos e gerando documentação...
+2026-02-05 13:39:24,903 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 55009  | Loaded API Key: sk-or-v1-9...
+2026-02-05 13:39:25,340 | INFO     | Passo: Round 2 - Analyst    | Tokens: 55009  | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-05 13:39:26,750 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 55975  | Passo 1 Saída: {
+    "thought": "Preciso ler os arquivos do projeto para começar a análise.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Transicrição\\transcricao_longa-v2.0"
+}
+2026-02-05 13:39:26,753 | INFO     | Passo: Round 2 - Analyst    | Tokens: 55975  | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-05 13:39:26,781 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 55975  | Observação: --- Arquivo: .gitignore ---
+# =============================================================================
+# transcricao_longa — .gitignore
+# =========================================================...
+2026-02-05 13:40:34,640 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 110777 | Passo 2 Saída: {
+    "thought": "Terminei de ler todos os arquivos do projeto e agora preciso estruturá-los em uma documentação técnica completa.",
+    "final_answer": "# Documentação Técnica do Projeto Transcrição Longa\n\n## Visão Geral do Projeto\nO projeto **Transcrição Longa** é um pipeline modular desenvolvido para a transcrição de audiências judiciais longas em português brasileiro. Utiliza **Google Speech-to-Text Chirp 3** para conversão de áudio em texto e **Gemini 2.5 Pro** para o pós-processamento, incluindo revisão e sumarização. O sistema é projetado para lidar com grande volume de dados e usa arquiteturas de microsserviços para garantir eficiência e escalabilidade.\n\n### Funcionalidades Principais\n- Transcrição de vídeo com suporte a múltiplos participantes.\n- Revisão e diarização automática de texto.\n- Geração de resumos estruturados da audiência.\n- Uso de filas para gerenciar processamento assíncrono através do **Dramatiq** e **Redis**.\n\n### Contexto de Negócio\nAtende a necessidade de instituições jurídicas e empresas que buscam automatizar e aprimorar a eficiência de audiências judiciais, garantindo registros precisos e acessíveis para consultas futuras.\n\n## Tecnologias e Dependências\n- **Linguagem de Programação:** Python 3.11+\n- **Frameworks e Bibliotecas:**\n  - `google-cloud-speech>=2.20.0`\n  - `google-cloud-storage>=2.10.0`\n  - `google-genai>=0.5.0`\n  - `dramatiq[redis]>=1.15.0`\n  - `redis>=4.5.0`\n  - `python-dotenv>=1.0.0`\n  - `pymongo>=4.5.0` (opcional)\n- **Ambiente:**\n  - Redis (para gerenciamento de filas)\n  - FFmpeg (para processamento de vídeo)\n\n## Arquitetura do Sistema\nO sistema segue a **Arquitetura Hexagonal (Ports and Adapters)**, garantindo separação clara entre lógica de negócio e infraestrutura. A estrutura do projeto está organizada em pastas, incluindo:\n- **dominio/**: Entidades e regras de negócios.\n- **aplicacao/**: Casos de uso e interfaces.\n- **infraestrutura/**: Adaptadores concretos para serviços externos.\n- **workers/**: Processos de backend que executam o trabalho de transcrição e revisão com **Dramatiq**.\n\n## Fluxo de Execução com Diagrama\n1. O ponto de entrada do sistema é o arquivo `main.py` que aceita parâmetros da linha de comando para vídeo e configurações.\n2. A entrada do vídeo é processada pelo trabalhador `processar_entrada`, que cria um job e inicia o processamento de chunks do vídeo.\n3. Os chunks são processados em etapas: chunking, transcrição (STT), revisão e sumarização.\n4. Os resultados finais são salvos em um diretório específico.\n\n```mermaid\ngraph TD;\n    A[Início] --> B[Entradas de vídeo]\n    B --> C[Processar entrada]\n    C --> D[chunking]\n    D --> E[STT]\n    E --> F[Revisão e Diarização]\n    F --> G[Revisão Final]\n    G --> H[Sumarização]\n    H --> I[Salvar resultados]\n    I --> J[Fim]\n```\n\n## Componentes Chave\n- **Entrada** (`src/workers/entrada.py`):\n  - **Responsabilidade:** Receber vídeos e iniciar jobs de transcrição.\n  - **Interfaces Públicas:** `processar_entrada(video_path, force_restart)`\n  - **Interações:** Envia jobs para o worker de chunking.\n\n- **Chunking** (`src/workers/chunking.py`):\n  - **Responsabilidade:** Dividir vídeos em partes menores (chunks).\n  - **Interfaces Públicas:** `processar_chunking_job(job_id)`\n  - **Interações:** Envia chunks para o worker de STT.\n\n- **STT** (`src/workers/stt.py`):\n  - **Responsabilidade:** Transcrever áudio em texto.\n  - **Interfaces Públicas:** `processar_stt(job_id)`\n  - **Interações:** Envia resultados para o worker de revisão.\n\n- **Revisão** (`src/workers/revisao_diarizacao.py`):\n  - **Responsabilidade:** Revisão e diarização dos textos.\n  - **Interfaces Públicas:** `processar_revisao_diarizacao(job_id)`\n  - **Interações:** Interage com o worker de revisão final.\n\n## Fluxo de Dados\nOs dados fluem através do sistema da seguinte forma:\n- **Entrada:** O usuário fornece um vídeo que é registrado no banco de dados.\n- **Processamento:** O vídeo é dividido em chunks, transcrito e revisado, com cada etapa atualizando o status no banco de dados.\n- **Saída:** Resultados finais da transcrição são armazenados em diretórios predefinidos.\n\n## Configuração e Uso\n### Pré-requisitos\n- Python 3.11+\n- Redis e FFmpeg instalados\n\n### Instalação\n```bash\ngit clone <repo>\ncdf transcricao_longa\npython -m venv .venv\nsource .venv/bin/activate # ou .venv\\Scripts\\activate para Windows\npip install -r requirements.txt\n```\n### Como Executar\nPara processar um vídeo:\n```bash\npython main.py --video \"caminho/para/video.mp4\"\n```\nPara visualizar status:\n```bash\npython main.py --status\n```\nPara usar workers, inicie o Redis e execute:\n```bash\n.\\start_workers.ps1\n```\n\n## Dependências Entre Módulos\n```mermaid\ngraph TD;\n    A[Entrada] -->|Cria Jobs| B[Chunking]\n    B -->|Chunks para STT| C[STT]\n    C -->|Resultados para Revisão| D[Revisão Diarização]\n    D -->|Enviar para Revisão Final| E[Revisão Final]\n    E -->|Resulta em Sumarização| F[Sumarização]\n    F -->|Armazenar os resultados| G[Salvar]\n```\n\nEssa documentação técnica fornece uma visão abrangente do projeto, permitindo que desenvolvedores de diferentes níveis compreendam a estrutura e funcionamento do sistema de transcrição longa."
+}
+2026-02-05 13:40:34,643 | INFO     | Passo: Round 2 - Analyst    | Tokens: 110777 | Agente alcançou a resposta final.
+2026-02-05 13:40:34,645 | INFO     | Passo: Round 2 - Analyst    | Tokens: 109811 | Analista finalizou em 2 passos. Tokens estimados bloco: 54802
+2026-02-05 13:40:34,648 | INFO     | Passo: Round 2 - Critic     | Tokens: 109811 | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-05 13:40:34,649 | INFO     | Passo: Round 2 - Critic     | Tokens: 109811 | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-05 13:41:16,902 | INFO     | Passo: Round 2 - Critic     | Tokens: 109811 | Caso de Uso Finalizado. Aprovado: True, Nota: 8.333333333333334
+2026-02-05 13:41:16,904 | INFO     | Passo: Round 2 - Critic     | Tokens: 109811 | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-05 13:41:16,907 | INFO     | Passo: Round 2 - Critic     | Tokens: 109811 | Documentação salva em: generated_docs/transcricao_longa-v20_20260205_134116.md
+2026-02-06 10:29:17,695 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\Aula IA
+2026-02-06 10:29:17,711 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-06 10:29:17,713 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-06 10:29:17,713 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-06 10:29:17,719 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-06 10:29:17,720 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-06 10:29:17,741 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-06 10:29:18,626 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-06 10:29:24,669 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 900    | Passo 1 Saída: {
+    "thought": "O primeiro passo é ler os arquivos do projeto específico para entender sua estrutura e conteúdo.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Aula IA"
+}
+2026-02-06 10:29:24,671 | INFO     | Passo: Round 1 - Analyst    | Tokens: 900    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Aula IA
+2026-02-06 10:29:24,739 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 900    | Observação: --- Arquivo: .env ---
+OPENROUTER_KEY=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
+
+--- Arquivo: Aula Engenharia de IA.ipynb ---
+{
+ "cells": [
+  {
+   "cell_type": "markdown...
+2026-02-06 10:29:46,839 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 4195   | Passo 2 Saída: {
+    "thought": "Agora que li os arquivos do projeto, posso identificar o propósito geral, as tecnologias usadas, e outros detalhes. Vou compilar essas informações e iniciar a documentação.",
+    "final_answer": "# Visão Geral do Projeto\nO projeto intitulado \"Aula de Engenharia de IA\" é uma aplicação educacional destinada a ensinar os fundamentos e as práticas da engenharia de inteligência artificial. As funcionalidades principais incluem:\n- Fundamentos e Arquitetura de Modelos\n- Embeddings e Vector Bases\n- Context Engineering\n- Agents\n- Fine Tuning\n- Pipeline de Início ao Fim\n\n## Contexto de Negócio\nEste projeto serve como uma plataforma de aprendizado para estudantes e profissionais que desejam aprimorar suas habilidades em inteligência artificial, abordando tanto a teoria quanto a prática.\n\n# Tecnologias e Dependências\n- **Python**: Linguagem de programação principal.\n- **Bibliotecas**:\n  - `tensorflow==2.20.0`\n  - `ipykernel==7.1.0`\n  - `dotenv==0.9.9`\n  - `anthropic==0.73.0`\n  - `tiktoken==0.12.0`\n  - `numpy==2.3.5`\n  - `langgraph==1.0.3`\n\n# Arquitetura do Sistema\nO sistema é estruturado em um notebook Jupyter que integra teoria e prática através de células de código e markdown. Ele utiliza um padrão arquitetural de notebook, permitindo a execução interativa de trechos de código e a visualização imediata dos resultados.\n\n### Padrões de Design\n- **Programação Orientada a Objetos** (POO) para encapsulação de lógicas de operação em funções.\n- **Pipeline de Dados** que permite a sequência lógica de operações a partir de dados de entrada até a saída final.\n\n# Fluxo de Execução com Diagrama\nO fluxo de execução do sistema é linear e interativo. A seguir está um diagrama que representa o fluxo em formato Mermaid:\n```mermaid\nflowchart TD\n    A[\"Entrada de Dados\"] --> B[\"Processamento de Dados\"]\n    B --> C[\"Análise e Treinamento\"]\n    C --> D[\"Resultados e Saídas\"]\n```\n\n## Passo a Passo do Fluxo\n1. **Entrada de Dados**: Dados são recebidos através de variáveis ou arquivos.\n2. **Processamento de Dados**: Os dados entram em funções que preparam e transformam esses dados para posterior uso.\n3. **Análise e Treinamento**: Algoritmos de machine learning são utilizados para treinar modelos com os dados preparados.\n4. **Resultados e Saídas**: Resultados são apresentados ao usuário através de visualizações ou outputs em texto.\n\n# Componentes Chave\n- **Modelo de IA**\n  - **Responsabilidade**: Realiza treino e inferência com dados.\n  - **Interfaces Públicas**: `train(data)`, `predict(input)`.\n  - **Interações**: Interage com o módulo de processamento de dados e utiliza bibliotecas como TensorFlow.\n\n- **Processador de Dados**\n  - **Responsabilidade**: Limpeza e preparação dos dados de entrada.\n  - **Interfaces Públicas**: `prepare(data)`, `clean(data)`.\n  - **Interações**: Recebe dados de entrada e fornece dados limpos ao modelo.\n\n# Fluxo de Dados\nOs dados são recebidos na forma de entradas no notebook, processados pelo Processador de Dados, e então enviados ao Modelo de IA para treinamento e previsões. Os resultados são apresentados ao usuário no mesmo ambiente de notebook.\n\n# Configuração e Uso\nPara configurar e executar o projeto, siga as instruções:\n1. **Pré-requisitos**: Python 3.8 ou superior.\n2. **Instalação**: Instale as dependências usando o comando:\n   ```bash\n   pip install -r requirements.txt\n   ```\n3. **Execução**: Execute o Jupyter Notebook:\n   ```bash\n   jupyter notebook \"Aula Engenharia de IA.ipynb\"\n   ```\n\n# Dependências Entre Módulos\nO diagrama abaixo representa as dependências entre os principais módulos:\n```mermaid\ngraph TD\n    A[\"Processador de Dados\"] --> B[\"Modelo de IA\"]\n    B --> C[\"Resultados\"]\n```\n\nEsta documentação técnica foi criada para fornecer uma visão clara e precisa do sistema e de sua arquitetura."
+}
+2026-02-06 10:29:46,840 | INFO     | Passo: Round 1 - Analyst    | Tokens: 4195   | Agente alcançou a resposta final.
+2026-02-06 10:29:46,846 | INFO     | Passo: Round 1 - Analyst    | Tokens: 3295   | Analista finalizou em 2 passos. Tokens estimados bloco: 3295
+2026-02-06 10:29:46,848 | INFO     | Passo: Round 1 - Critic     | Tokens: 3295   | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-06 10:29:46,849 | INFO     | Passo: Round 1 - Critic     | Tokens: 3295   | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-06 10:30:36,107 | INFO     | Passo: Round 1 - Critic     | Tokens: 3295   | Caso de Uso Finalizado. Aprovado: True, Nota: 8.1
+2026-02-06 10:30:36,108 | INFO     | Passo: Round 1 - Critic     | Tokens: 3295   | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-06 10:30:36,111 | INFO     | Passo: Round 1 - Critic     | Tokens: 3295   | Documentação salva em: generated_docs/Aula_IA_20260206_103036.md
+2026-02-09 10:57:37,059 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\Agentes IA\agentic-code-verification\src
+2026-02-09 10:57:37,061 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-09 10:57:37,062 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-09 10:57:37,063 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-09 10:57:37,063 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-09 10:57:37,065 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-09 10:57:37,069 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-09 10:57:37,871 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-09 10:57:42,350 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 914    | Passo 1 Saída: {
+    "thought": "Vou começar coletando os arquivos do projeto para entender seu conteúdo e estrutura.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Agentes IA\\agentic-code-verification\\src"
+}
+2026-02-09 10:57:42,350 | INFO     | Passo: Round 1 - Analyst    | Tokens: 914    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Agentes IA\agentic-code-verification\src
+2026-02-09 10:57:42,570 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 914    | Observação: --- Arquivo: code_analyst.py ---
+# Orquestrador que utiliza o agente ReAct para analisar a base de código e gerar documentação técnica.
+from src.agents.react_core import ReActAgent
+from src.utils.file...
+2026-02-09 10:57:59,646 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 22541  | Passo 2 Saída: {
+    "thought": "Concluí a leitura do código do projeto. Agora, vou organizar as informações coletadas em uma documentação técnica estruturada.",
+    "final_answer": "# Documentação Técnica do Projeto AI Quality Critic Agent\n\n## Visão Geral do Projeto\nO projeto **AI Quality Critic Agent** é um sistema projetado para analisar bases de código e gerar documentação técnica com qualidade. O principal propósito é permitir que um agente de inteligência artificial, utilizando a abordagem ReAct, possa avaliar um projeto de software local e fornecer feedback detalhado sobre a qualidade da documentação, incluindo verificações para assegurar que todas as referências a arquivos existentes estão corretas e que a documentação é tecnicamente precisa.\n\n## Tecnologias e Dependências\n- **Linguagem:** Python\n- **Framework:** FastAPI (versão não especificada)\n- **Bibliotecas principais:**\n  - OpenAI\n  - PraisonAI\n  - Langchain\n  - DuckDuckGo Search\n- **Ferramentas Utilizadas:**\n  - Logging (para rastreamento e geração de logs)\n  - Uvicorn (para execução do server FastAPI)\n\n## Arquitetura do Sistema\nO sistema é baseado em uma arquitetura em camadas utilizando a abordagem de **Pipelines Hexagonais**. As principais camadas incluem:\n- **Camada de Apresentação:** FastAPI gerando uma interface web para interação do usuário.\n- **Camada de Negócios:** Implementação de regras e workflows através de objetos de uso e serviços especializados, como `ReviewPipeline` e `VerifyDocumentationUseCase`.\n- **Camada de Dados:** Representada através de entidades e repositórios que interagem com o sistema de arquivos para leituras e validações.\n\n## Fluxo de Execução com Diagrama\n1. O servidor FastAPI inicia e espera por requisições na porta 8000.\n2. Quando o usuário solicita uma análise através da interface web, a função `stream_analysis` é chamada.\n3. Esta inicia o processo de análise, onde um agente `ReActAgent` faz a leitura dos arquivos do projeto usando `read_project_files`.\n4. O agente, então, analisa a documentação e passa para a etapa de revisão utilizando o `CriticAgent` para validar a documentação gerada.\n5. O resultado da análise é enviado ao frontend em tempo real via eventos SSE (Server-Sent Events).\n\n```mermaid\nflowchart TD;\n    A[Início do Servidor FastAPI] --> B{Usuário Solicita Análise};\n    B -->|Sim| C[Executa stream_analysis];\n    C --> D[Leia arquivos do projeto];\n    D --> E[Executa ReActAgent para análise];\n    E --> F[Executa CriticAgent para revisão];\n    F --> G[Resultado enviado ao frontend];\n    G --> H[Fim];\n    B -->|Não| H;\n```\n\n## Componentes Chave\n- **ReActAgent**\n  - **Responsabilidade:** Orquestrar a análise do código e gerar documentação.\n  - **Interfaces Públicas:**\n    - `run(goal: str)`: Inicia a execução do agente com um objetivo específico.\n- **CriticAgent**\n  - **Responsabilidade:** Revisar a documentação gerada, verificar a existência de arquivos e atribuir nota de qualidade.\n  - **Interfaces Públicas:**\n    - `review(analyst_output: str, project_path: str)`: Método principal que realiza a revisão.\n- **ReviewPipeline**\n  - **Responsabilidade:** Estrutura que gerencia o fluxo de revisão.\n  - **Interfaces Públicas:**\n    - `run(analyst_output: str, project_path: str)`: Executa o pipeline para revisar a documentação.\n\n## Fluxo de Dados\nOs dados fluem através do sistema da seguinte forma:\n1. **Entrada:** O caminho do projeto é recebido pela função `stream_analysis` quando a análise é solicitada pelo usuário.\n2. **Processamento:**\n   - A função `read_project_files` coleta e lê o conteúdo dos arquivos no diretório do projeto.\n   - O `ReActAgent` processa este conteúdo e gera um rascunho de documentação.\n   - Em seguida, o `CriticAgent` revisa o rascunho, verificando a existência de arquivos citados na documentação.\n3. **Saída:** O feedback e a documentação final são enviados ao frontend, onde são atualizados em tempo real na interface web.\n\n## Configuração e Uso\n### Pré-requisitos\n- Python 3.7 ou superior\n- Dependências listadas em `requirements.txt`\n\n### Instalação\nPara instalar as dependências do projeto:\n```bash\npip install -r requirements.txt\n```\n\n### Execução\nPara rodar o servidor FastAPI, execute:\n```bash\nuvicorn src.server:app --reload\n```\n\nApós iniciar o servidor, acesse o endereço `http://127.0.0.1:8000` em seu navegador.\n\n## Dependências Entre Módulos\n```mermaid\ndgraph TD;\n    A[core] --> B[ports];\n    A --> C[use_cases];\n    B --> D[critic];\n    C --> E[pipelines];\n    E --> F[adapters];\n    E --> G[entities];\n    F --> H[praison_critic];\n    C --> I[logger];\n```\n\nEsta documentação abrange a visão geral do projet e informações sobre arquitetura, fluxo de dados, e instruções para configuração e uso. Para mais informações, consulte os comentários nos arquivos de código ou a documentação interna.",
+    "json": true
+}
+2026-02-09 10:57:59,648 | INFO     | Passo: Round 1 - Analyst    | Tokens: 22541  | Agente alcançou a resposta final.
+2026-02-09 10:57:59,653 | INFO     | Passo: Round 1 - Analyst    | Tokens: 21627  | Analista finalizou em 2 passos. Tokens estimados bloco: 21627
+2026-02-09 10:57:59,653 | INFO     | Passo: Round 1 - Critic     | Tokens: 21627  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-09 10:57:59,654 | INFO     | Passo: Round 1 - Critic     | Tokens: 21627  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-09 10:58:35,915 | INFO     | Passo: Round 1 - Critic     | Tokens: 21627  | Caso de Uso Finalizado. Aprovado: False, Nota: 6.56
+2026-02-09 10:58:35,917 | INFO     | Passo: Round 1 - Critic     | Tokens: 21627  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-09 10:58:35,918 | INFO     | Passo: Round 2 - Analyst    | Tokens: 21627  | Analista está lendo arquivos e gerando documentação...
+2026-02-09 10:58:35,920 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 21627  | Loaded API Key: sk-or-v1-9...
+2026-02-09 10:58:36,329 | INFO     | Passo: Round 2 - Analyst    | Tokens: 21627  | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-09 10:58:37,449 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 22602  | Passo 1 Saída: {
+    "thought": "Vou começar lendo os arquivos do projeto para entender sua estrutura e conteúdo.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\Agentes IA\\agentic-code-verification\\src"
+}
+2026-02-09 10:58:37,450 | INFO     | Passo: Round 2 - Analyst    | Tokens: 22602  | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\Agentes IA\agentic-code-verification\src
+2026-02-09 10:58:37,459 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 22602  | Observação: --- Arquivo: code_analyst.py ---
+# Orquestrador que utiliza o agente ReAct para analisar a base de código e gerar documentação técnica.
+from src.agents.react_core import ReActAgent
+from src.utils.file...
+2026-02-09 10:58:59,425 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 44563  | Passo 2 Saída: {
+    "thought": "Agora que li os arquivos do projeto, posso identificar o propósito geral, linguagens e tecnologias utilizadas, e criar uma documentação técnica estruturada conforme solicitado.",
+    "final_answer": "# Documentação Técnica do Projeto AI Quality Critic Agent\n\n## Visão Geral do Projeto\nO **AI Quality Critic Agent** é um sistema desenvolvido para analisar bases de código e gerar documentação técnica de forma automatizada. O projeto utiliza técnicas de inteligência artificial para revisar a documentação gerada, verificar a existência de arquivos mencionados e avaliar a qualidade do código. O objetivo principal é garantir a alta qualidade da documentação técnica produzida e fornecer feedback útil para os desenvolvedores.\n\n### Funcionalidades Principais\n- Análise automática de bases de código para gerar documentação técnica.\n- Verificação de alucinações (referências a arquivos inexistentes).\n- Avaliação de qualidade da documentação com uma pontuação e feedback.\n- Interface web para monitoramento do progresso da análise em tempo real.\n\n### Contexto de Negócio\nO projeto é útil para equipes de desenvolvimento que desejam manter a documentação técnica de seus projetos em alta qualidade e atualizada, facilitando a manutenção e redução de problemas associados à falta de documentação precisa.\n\n## Tecnologias e Dependências\n- **Linguagem de Programação**: Python 3.x\n- **Framework**: FastAPI\n- **Bibliotecas**:\n  - `pydantic` para validação de dados.\n  - `langchain` para ferramentas de análise.\n  - `openai` para integração com APIs de IA.\n  - `uvicorn` para servidor ASGI.\n  - `duckduckgo_search` para buscas na web.\n  - `BeautifulSoup` para web scraping.\n- **Versionamento de Pacotes**: Todos os pacotes são instaláveis via `pip` e devem estar em versões compatíveis com o Python 3.x.\n\n## Arquitetura do Sistema\nA arquitetura do sistema segue um padrão hexagonal, onde a lógica de aplicação está isolada de detalhes externos como a interface do usuário e a persistência de dados. O projeto é composto por diversos módulos, incluindo agentes de IA, pipeline de revisão e ferramentas utilitárias que permitem a análise e assistência durante o processo de documentação.\n\n### Padrões de Design\n- **MVC (Model-View-Controller)**: Estrutura da aplicação é dividida entre modelos de domínio, controladores (FastAPI) e a interface do usuário.\n- **Injeção de Dependência**: Utilizada para gerenciar a criação e uso de componentes como `PraisonCriticAdapter` e `ReviewPipeline`.\n\n## Fluxo de Execução com Diagrama\nO fluxo de execução do sistema pode ser descrito da seguinte maneira:\n1. O usuário inicia a análise através da interface web, enviando o caminho do projeto.\n2. O servidor FastAPI recebe a requisição e inicia um gerador que controla o fluxo de análise.\n3. O gerador chama o agente `ReAct` para analisar a base de código e gerar a documentação.\n4. A documentação é revisada pelo `CriticAgent` que valida sua qualidade e verifica arquivos inexistentes.\n5. O resultado (pontuação, feedback e erros) é retornado e exibido na interface em tempo real.\n\n```mermaid\nsequenceDiagram\n    participant U as Usuário\n    participant W as Web Interface\n    participant S as Servidor FastAPI\n    participant A as Agente ReAct\n    participant C as CriticAgent\n\n    U->>W: Iniciar Análise\n    W->>S: Enviar caminho do projeto\n    S->>A: Analisar base de código\n    A->>C: Revisar documentação gerada\n    C->>A: Retornar feedback e pontuação\n    A->>S: Resultado da análise\n    S->>W: Exibir resultados\n    W->>U: Mostrar documentação e feedback\n```\n\n## Componentes Chave\n### 1. Agente ReAct\n- **Responsabilidade**: Coordena a análise do código e gera a documentação técnica.\n- **Interfaces Públicas**:\n  - `run(goal: str) -> dict`: Inicia a execução do agente.\n- **Interações**: Chama funções utilitárias para leitura de arquivos e monitora o progresso da análise.\n\n### 2. CriticAgent\n- **Responsabilidade**: Avalia a documentação gerada e verifica a existência de arquivos, gerando um relatório de qualidade.\n- **Interfaces Públicas**:\n  - `review(analyst_output: str, project_path: str) -> ReviewResult`: Executa a revisão da documentação.\n- **Interações**: Recebe a documentação do agente ReAct e retorna feedback.\n\n### 3. ReviewPipeline\n- **Responsabilidade**: Coordena o processo de revisão da documentação, utilizando o CriticAgent para análise técnica.\n- **Interfaces Públicas**:\n  - `run(analyst_output: str, project_path: str) -> dict`: Executa o pipeline de revisão.\n- **Interações**: Utiliza o adapter para integrar diferentes agentes. \n\n## Fluxo de Dados\nOs dados fluem através do sistema da seguinte forma:\n1. O usuário fornece um caminho de projeto.\n2. O `Servidor FastAPI` processa a requisição e inicia o `Agente ReAct`.\n3. O `Agente ReAct` lê os arquivos do projeto usando `read_project_files()` e gera uma documentação inicial.\n4. A documentação gerada é enviada ao `CriticAgent` para validação.\n5. O `CriticAgent` analisa a documentação, verifica a presença de arquivos e retorna a avaliação.\n6. O resultado da análise é enviado de volta ao usuário através da interface web.\n\n## Configuração e Uso\n### Instruções de Configuração\n1. **Pré-requisitos**: Python 3.x, FastAPI, dependências instaladas via `pip`.\n2. **Instalação**: Clone o repositório e instale as dependências:\n   ```bash\n   git clone <repositório>\n   cd <diretório do projeto>\n   pip install -r requirements.txt\n   ```\n3. **Executar o Servidor**:\n   ```bash\n   uvicorn src.server:app --host 127.0.0.1 --port 8000 --reload\n   ```\n4. **Uso**: Acesse a interface web no navegador em `http://127.0.0.1:8000` e forneça o caminho do projeto desejado.\n\n## Dependências Entre Módulos\n```mermaid\ngraph TD\n    A[Agente ReAct] -->|Utiliza| B[Funções Utilitárias]\n    A -->|Inicia| C[Servidor FastAPI]\n    C -->|Chama| D[CriticAgent]\n    D -->|Dependente de| E[ReviewPipeline]\n    E -->|Injeta| F[PraisonCriticAdapter]\n```"
+}
+2026-02-09 10:58:59,428 | INFO     | Passo: Round 2 - Analyst    | Tokens: 44563  | Agente alcançou a resposta final.
+2026-02-09 10:58:59,429 | INFO     | Passo: Round 2 - Analyst    | Tokens: 43588  | Analista finalizou em 2 passos. Tokens estimados bloco: 21961
+2026-02-09 10:58:59,431 | INFO     | Passo: Round 2 - Critic     | Tokens: 43588  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-09 10:58:59,431 | INFO     | Passo: Round 2 - Critic     | Tokens: 43588  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-09 13:45:47,805 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-09 13:45:47,807 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-09 13:45:47,808 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-09 13:45:47,810 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-09 13:45:47,811 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-09 13:45:47,814 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-09 13:45:47,816 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-09 13:45:48,322 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-09 13:45:50,269 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 906    | Passo 1 Saída: {
+    "thought": "Vou iniciar a leitura dos arquivos do projeto para entender seu conteúdo e funcionamento.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-09 13:45:50,270 | INFO     | Passo: Round 1 - Analyst    | Tokens: 906    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-09 13:46:03,158 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 906    | Observação: --- Arquivo: .env ---
+COMPILE_ALL=true
+DETECTOR_BATCH_SIZE=32
+RECOGNITION_BATCH_SIZE=204
+ORDER_BATCH_SIZE=16
+#AZURE_OPENAI_API_KEY=6S3MkkpXh14XQsOA4dutiZyqYnp36paTzCg9YUE1xsRBay2hAeYmJQQJ99AKACYeBjFXJ...
+2026-02-09 13:46:06,022 | ERROR    | Passo: Round 1 - Analyst    | Tokens: 906    | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 4103735 tokens (4103735 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-09 13:46:06,028 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-09 13:46:06,033 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-09 13:46:06,037 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-09 13:46:14,719 | WARNING  | Passo: Round 1 - Critic     | Tokens: 0      | Falha ao parsear JSON direto: {
+    "approved": False,
+    "score": 4.0,
+    "feedback": "The overall score is below the threshold... Tentando correção.
+2026-02-09 13:46:14,720 | ERROR    | Passo: Round 1 - Critic     | Tokens: 0      | Falha ao parsear JSON do PraisonAI. Raw: {
+    "approved": False,
+    "score": 4.0,
+    "feedback": "The overall score is below the threshold. Improvements are needed.",
+    "hallucinations": [],
+    "quality_feedback": "The section falls sh
+2026-02-09 13:46:14,722 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 0
+2026-02-09 13:46:14,723 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-09 13:46:14,728 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-09 13:46:14,730 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-09 13:46:15,131 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-09 13:46:16,417 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 1010   | Passo 1 Saída: {
+    "thought": "Preciso ler os arquivos do projeto para coletar as informações necessárias para a documentação.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-09 13:46:16,419 | INFO     | Passo: Round 2 - Analyst    | Tokens: 1010   | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-09 13:46:22,377 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 1010   | Observação: --- Arquivo: .env ---
+COMPILE_ALL=true
+DETECTOR_BATCH_SIZE=32
+RECOGNITION_BATCH_SIZE=204
+ORDER_BATCH_SIZE=16
+#AZURE_OPENAI_API_KEY=6S3MkkpXh14XQsOA4dutiZyqYnp36paTzCg9YUE1xsRBay2hAeYmJQQJ99AKACYeBjFXJ...
+2026-02-09 13:46:25,186 | ERROR    | Passo: Round 2 - Analyst    | Tokens: 1010   | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 4103856 tokens (4103856 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-09 13:46:25,191 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-09 13:46:25,194 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-09 13:46:25,197 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-09 13:46:29,220 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 6.0
+2026-02-09 13:46:29,222 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-09 13:46:29,226 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-09 13:46:29,228 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-09 13:46:29,668 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-09 13:46:31,497 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 949    | Passo 1 Saída: {
+    "thought": "Preciso começar analisando os arquivos do projeto para entender sua estrutura e funcionalidade.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-09 13:46:31,499 | INFO     | Passo: Round 3 - Analyst    | Tokens: 949    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-09 13:46:37,400 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 949    | Observação: --- Arquivo: .env ---
+COMPILE_ALL=true
+DETECTOR_BATCH_SIZE=32
+RECOGNITION_BATCH_SIZE=204
+ORDER_BATCH_SIZE=16
+#AZURE_OPENAI_API_KEY=6S3MkkpXh14XQsOA4dutiZyqYnp36paTzCg9YUE1xsRBay2hAeYmJQQJ99AKACYeBjFXJ...
+2026-02-09 13:46:40,326 | ERROR    | Passo: Round 3 - Analyst    | Tokens: 949    | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 4103785 tokens (4103785 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-09 13:46:40,331 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-09 13:46:40,333 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-09 13:46:40,334 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-09 13:46:44,795 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 5.0
+2026-02-09 13:46:44,797 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:10:55,362 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:10:55,365 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-10 09:10:55,367 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-10 09:10:55,368 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-10 09:10:55,374 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-10 09:10:55,382 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:10:55,397 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:10:56,181 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:11:01,163 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 907    | Passo 1 Saída: {
+    "thought": "O primeiro passo é ler os arquivos do projeto para entender sua estrutura e conteúdo.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:11:01,164 | INFO     | Passo: Round 1 - Analyst    | Tokens: 907    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:11:13,302 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 907    | Observação: --- Arquivo: .env ---
+COMPILE_ALL=true
+DETECTOR_BATCH_SIZE=32
+RECOGNITION_BATCH_SIZE=204
+ORDER_BATCH_SIZE=16
+#AZURE_OPENAI_API_KEY=6S3MkkpXh14XQsOA4dutiZyqYnp36paTzCg9YUE1xsRBay2hAeYmJQQJ99AKACYeBjFXJ...
+2026-02-10 09:11:16,319 | ERROR    | Passo: Round 1 - Analyst    | Tokens: 907    | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 4103735 tokens (4103735 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-10 09:11:16,323 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-10 09:11:16,325 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:11:16,326 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:11:34,567 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 4.0
+2026-02-10 09:11:34,568 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:11:34,569 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:11:34,571 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:11:34,964 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:11:36,725 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 975    | Passo 1 Saída: {
+    "thought": "Começarei lendo os arquivos do projeto para coletar informações sobre o código, entender a estrutura e o propósito do projeto.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:11:36,727 | INFO     | Passo: Round 2 - Analyst    | Tokens: 975    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:11:42,291 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 975    | Observação: --- Arquivo: .env ---
+COMPILE_ALL=true
+DETECTOR_BATCH_SIZE=32
+RECOGNITION_BATCH_SIZE=204
+ORDER_BATCH_SIZE=16
+#AZURE_OPENAI_API_KEY=6S3MkkpXh14XQsOA4dutiZyqYnp36paTzCg9YUE1xsRBay2hAeYmJQQJ99AKACYeBjFXJ...
+2026-02-10 09:11:45,057 | ERROR    | Passo: Round 2 - Analyst    | Tokens: 975    | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 4103818 tokens (4103818 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-10 09:11:45,061 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-10 09:11:45,062 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:11:45,063 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:11:49,304 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 5.0
+2026-02-10 09:11:49,304 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:11:49,306 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:11:49,307 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:11:49,719 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:11:51,425 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 966    | Passo 1 Saída: {
+    "thought": "O primeiro passo é explorar o conteúdo do projeto utilizando a função read_project_files para coletar informações sobre o código e a documentação.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:11:51,427 | INFO     | Passo: Round 3 - Analyst    | Tokens: 966    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:11:56,753 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 966    | Observação: --- Arquivo: .env ---
+COMPILE_ALL=true
+DETECTOR_BATCH_SIZE=32
+RECOGNITION_BATCH_SIZE=204
+ORDER_BATCH_SIZE=16
+#AZURE_OPENAI_API_KEY=6S3MkkpXh14XQsOA4dutiZyqYnp36paTzCg9YUE1xsRBay2hAeYmJQQJ99AKACYeBjFXJ...
+2026-02-10 09:11:59,320 | ERROR    | Passo: Round 3 - Analyst    | Tokens: 966    | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 4103813 tokens (4103813 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-10 09:11:59,323 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-10 09:11:59,325 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:11:59,325 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:12:23,344 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 5.0
+2026-02-10 09:12:23,345 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:20:40,890 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:20:40,892 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-10 09:20:40,892 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-10 09:20:40,894 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-10 09:20:40,895 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-10 09:20:40,896 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:20:40,898 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:20:41,389 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:20:43,733 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 907    | Passo 1 Saída: {
+    "thought": "Meu primeiro passo é ler os arquivos do projeto para entender seu propósito e estrutura.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:20:43,734 | INFO     | Passo: Round 1 - Analyst    | Tokens: 907    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:20:43,824 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 907    | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-10 09:20:44,245 | ERROR    | Passo: Round 1 - Analyst    | Tokens: 907    | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 177410 tokens (177410 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-10 09:20:44,246 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-10 09:20:44,248 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:20:44,248 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:20:52,713 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 5.0
+2026-02-10 09:20:52,715 | INFO     | Passo: Round 1 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:20:52,716 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:20:52,719 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:20:53,168 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:20:54,827 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 947    | Passo 1 Saída: {
+    "thought": "Preciso começar a análise do projeto lendo os arquivos do diretório especificado.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:20:54,827 | INFO     | Passo: Round 2 - Analyst    | Tokens: 947    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:20:54,843 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 947    | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-10 09:20:55,169 | ERROR    | Passo: Round 2 - Analyst    | Tokens: 947    | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 177451 tokens (177451 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-10 09:20:55,171 | INFO     | Passo: Round 2 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-10 09:20:55,171 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:20:55,172 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:21:00,973 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 5.0
+2026-02-10 09:21:00,975 | INFO     | Passo: Round 2 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:21:00,977 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:21:00,981 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:21:01,238 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:21:02,816 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 955    | Passo 1 Saída: {
+    "thought": "Vou começar lendo os arquivos do projeto para coletar informações sobre sua estrutura e detalhes.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:21:02,818 | INFO     | Passo: Round 3 - Analyst    | Tokens: 955    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:21:02,889 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 955    | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-10 09:21:03,161 | ERROR    | Passo: Round 3 - Analyst    | Tokens: 955    | Erro ao chamar LLM: Error code: 400 - {'error': {'message': 'This endpoint\'s maximum context length is 128000 tokens. However, you requested about 177475 tokens (177475 of text input). Please reduce the length of either one, or use the "middle-out" transform to compress your prompt automatically.', 'code': 400, 'metadata': {'provider_name': None}}}
+2026-02-10 09:21:03,163 | INFO     | Passo: Round 3 - Analyst    | Tokens: 0      | Analista finalizou em 1 passos. Tokens estimados bloco: 0
+2026-02-10 09:21:03,164 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:21:03,165 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:21:07,637 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Caso de Uso Finalizado. Aprovado: False, Nota: 5.0
+2026-02-10 09:21:07,638 | INFO     | Passo: Round 3 - Critic     | Tokens: 0      | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:22:33,023 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:22:33,024 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-10 09:22:33,026 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-10 09:22:33,029 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-10 09:22:33,030 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-10 09:22:33,031 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:22:33,032 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:22:33,499 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:22:35,419 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 909    | Passo 1 Saída: {
+    "thought": "Vou iniciar o processo de leitura dos arquivos do projeto para entender sua estrutura e funcionalidade.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:22:35,420 | INFO     | Passo: Round 1 - Analyst    | Tokens: 909    | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:22:35,445 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 909    | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-10 09:23:19,823 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 52732  | Passo 2 Saída: {
+    "thought": "Terminei de ler os arquivos do projeto e agora irei compor a documentação técnica com base nas informações coletadas. Primeiro, irei organizar as seções e, em seguida, gerar os textos e os diagramas necessários.",
+    "final_answer": "# Visão Geral do Projeto\n\n## Propósito\nO projeto **RAG-MPMG (MP-IA)** tem como objetivo principal implementar um sistema de processamento de inteligência artificial para normas internas do Ministério Público de Minas Gerais (MPMG). Ele oferece uma API para a realização de OCR em documentos, extração de informações e busca vetorial.\n\n## Funcionalidades Principais\n- **OCR de documentos**: Usa a biblioteca Surya OCR para digitalizar documentos.\n- **Extração de texto** e normalização sem perda de acentos.\n- **Chunking** orientado a estrutura normativa (artigos, parágrafos, etc.).\n- **Extração de metadados** (status, tipo, órgão, ano, etc.).\n- **Vetorização e indexação** com FAISS como padrão.\n- **Busca híbrida** com filtragem e expansão de consulta.\n- **API REST** utilizando FastAPI.\n- **Processamento distribuído** através do Ray (opcional).\n\n## Contexto de Negócio\nO sistema é destinado a melhorar a eficiência no processamento de documentos legais, facilitando a recuperação de informações e a automação de tarefas repetitivas dentro do MPMG.\n\n---\n\n# Tecnologias e Dependências\n- **Linguagem de Programação**: Python 3.13+\n- **Frameworks e Bibliotecas**:\n  - FastAPI (v0.115.14)\n  - Ray (v2.47.1)\n  - PyMuPDF (v1.26.1)\n  - Surya OCR\n  - FAISS (v1.13.2)\n  - MongoDB\n  - SQL Server\n- **Outras Dependências**:\n  - numpy (v2.4.1)\n  - openai (v1.10.0)\n  - redis (v6.4.0)\n\n---\n\n# Arquitetura do Sistema\nA arquitetura do sistema é baseada em uma **API RESTful** que serve como ponto de entrada para interações. As principais componentes incluem:\n- **API Routes**: Gerenciada pelo FastAPI, que controla os endpoints.\n- **Serviços**: Onde a lógica de negócios reside, como o gerenciamento de filas e processamento de protocolos de IA.\n- **Modelos**: Usando Pydantic para validação de dados.\n- **Banco de Dados**: Armazenamento de dados em MongoDB, que gerencia a persistência de documentos legais e suas minutas correspondentes.\n\n## Padrões Utilizados\n- **Microservices**: O sistema é modular, permitindo que cada componente seja desenvolvido e escalado de forma independente.\n- **Service-Oriented Architecture (SOA)**: Cada serviço comunica-se através de uma API bem definida.\n\n---\n\n# Fluxo de Execução com Diagrama\nA execução do sistema se inicia através de um **endpoint da API**, que desencadeia uma série de processos, incluindo:\n1. **Recepção da Requisição**: O cliente faz uma chamada para a API (ex: `/ocr-documentos-processo`).\n2. **Processamento do Documento**: O sistema realiza OCR e extrai texto e metadados.\n3. **Armazenamento e Indexação**: Os dados extraídos são armazenados no MongoDB e indexados no Vector Store.\n4. **Retorno da Resposta**: Os resultados são retornados ao cliente.\n\n```mermaid\ngraph TD;\n    A[API] -->|Recebe Requisição| B[Processamento OCR]\n    B -->|Extrai Texto| C[Armazenamento \n    e Indexação]\n    C -->|Retorna Resultados| D[Resposta ao Cliente]\n```\n\n---\n\n# Componentes Chave\n\n## 1. API\n- **Responsabilidade**: Gerenciar requisições e respostas via REST.\n- **Funções principais**:\n  - `gerar_minuta_endpoint`\n  - `modificar_minuta_endpoint`\n  - `ocr_documentos_processo_endpoint`\n  - `get_job_status`\n\n## 2. Serviços de OCR\n- **Responsabilidade**: Executar OCR e processar documentos.\n- **Funções principais**: `ocr_documento_pdf`, `ocr_documento_docx`, `ocr_documento_html`\n\n## 3. Gerenciador de Fila\n- **Responsabilidade**: Gerenciar a enfileiramento e processamento de tarefas.\n- **Interface Pública**: `enqueue_task`, `get_job_status`, `queue_stats`\n\n---\n\n# Fluxo de Dados\nOs dados fluem através de diferentes componentes da seguinte maneira:\n1. **Entrada**: O sistema recebe documentos por meio de chamadas à API.\n2. **Processamento**: O OCR é aplicado para extrair texto.\n3. **Armazenamento**: Os textos e metadados são armazenados no MongoDB e no Vector Store.\n4. **Saída**: Os documentos são recuperados e enviados de volta ao cliente.\n\n---\n\n# Configuração e Uso\n## Pré-requisitos\n- **Python**: 3.13+\n- **Banco de Dados**: MongoDB e SQL Server\n- **HDFS**: Para gerenciamento de arquivos grandes.\n\n## Instalação\n```bash\n# Clone o repositório\ngit clone <url-do-repositorio>\ncd RAG-MPMG\n# Crie um ambiente virtual e ative-o\npython -m venv venv\nvenv\\Scripts\\activate\n# Instale as dependências\npip install -r requirements.txt\n```\n\n## Execução\nA API pode ser executada com o seguinte comando:\n```bash\nuvicorn main:app --host 0.0.0.0 --port 8000 --reload\n```\nOs endpoints da API estarão disponíveis em `http://localhost:8000`.\n\n---\n\n# Dependências Entre Módulos\n```mermaid\ngraph TD;\n    A[API] -->|Interage com| B[Serviços]\n    B -->|Podem usar| C[Banco de Dados]\n    B -->|Gerenciado por| D[Gerenciador de Fila]\n    D -->|Interage com| E[Redis]\n```\n\n---"
+}
+2026-02-10 09:23:19,824 | INFO     | Passo: Round 1 - Analyst    | Tokens: 52732  | Agente alcançou a resposta final.
+2026-02-10 09:23:19,827 | INFO     | Passo: Round 1 - Analyst    | Tokens: 51823  | Analista finalizou em 2 passos. Tokens estimados bloco: 51823
+2026-02-10 09:23:19,828 | INFO     | Passo: Round 1 - Critic     | Tokens: 51823  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:23:19,828 | INFO     | Passo: Round 1 - Critic     | Tokens: 51823  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:24:35,009 | INFO     | Passo: Round 1 - Critic     | Tokens: 51823  | Caso de Uso Finalizado. Aprovado: False, Nota: 7.44
+2026-02-10 09:24:35,013 | INFO     | Passo: Round 1 - Critic     | Tokens: 51823  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:24:35,015 | INFO     | Passo: Round 2 - Analyst    | Tokens: 51823  | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:24:35,015 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 51823  | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:24:35,393 | INFO     | Passo: Round 2 - Analyst    | Tokens: 51823  | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:24:37,443 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 52785  | Passo 1 Saída: {
+    "thought": "Preciso começar analisando os arquivos do projeto para entender seu propósito, funcionalidades e arquitetura.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:24:37,443 | INFO     | Passo: Round 2 - Analyst    | Tokens: 52785  | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:24:37,460 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 52785  | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-10 09:25:37,709 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 104488 | Passo 2 Saída: {
+    "thought": "Concluí a leitura dos arquivos do projeto e coletei informações relevantes, incluindo a descrição do projeto e suas principais funcionalidades, bem como as tecnologias utilizadas. Agora, preciso compor a documentação técnica em Markdown com base nessas informações coletadas.",
+    "final_answer": "# Visão Geral do Projeto\n\nO projeto **RAG-MPMG** é uma API para processamento de Inteligência Artificial voltada para a transformação de normas internas do Ministério Público de Minas Gerais (MPMG) em um formato consultável. O sistema realiza OCR (Reconhecimento Óptico de Caracteres) de documentos, extração de texto, indexação, e busca vetorial, facilitando o acesso a informações normativas.\n\n## Funcionalidades principais\n- OCR de documentos (Surya OCR).\n- Extração de texto e normalização.\n- Chunking orientado a estrutura normativa.\n- Extração de metadados (tipo, órgão, ano, número, etc.).\n- Vetorização e indexação usando FAISS.\n- Busca híbrida com filtros contextuais.\n- API REST construída com FastAPI.\n- Processamento distribuído opcional usando Ray.\n\n# Tecnologias e Dependências\n- **Python**: >= 3.13\n- **FastAPI**: 0.115.14\n- **Ray**: 2.47.1\n- **PyMuPDF**: 1.26.1\n- **Surya OCR**: 0.14.6\n- **FAISS**: 1.13.2\n- **MongoDB**: >= 5.0\n- **Qdrant**: >= 1.7.0\n- **Dependências adicionais**: (listadas no arquivo requirements.txt).\n\n# Arquitetura do Sistema\nO sistema é construído usando uma arquitetura baseada em microserviços com os seguintes componentes principais:\n- **API**: exposta via FastAPI, gerenciando rotas e pedidos.\n- **Banco de dados**: MongoDB para armazenamento de documentos e metadados.\n- **Gerenciamento de filas**: Redis para gerenciamento de tarefas e prioridades em processamento.\n- **Processamento distribuído**: Via Ray para gerenciar tarefas em paralelo.\n- **Serviços de API externa**: Clientes para integração com serviços de IA como Azure e Google Gemini.\n\n# Fluxo de Execução com Diagrama\nO fluxo básico de execução do sistema é o seguinte:\n1. Recepção de um pedido via API.\n2. Análise do pedido e extração de informações necessárias.\n3. Início do processo através de uma fila de tarefas.\n4. Execução de tarefas em paralelo, incluindo OCR e indexação.\n5. Armazenamento de resultados e retornos na API.\n\n```mermaid\nflowchart TD\n    A[Usuário] -->|Faz pedido via API| B[API FastAPI]\n    B --> C[Gerenciador de Fila Redis] --> D{Processamento}\n    D -->|Inicia OCR| E[OCR Serviços]\n    D -->|Indexa Dados| F[FAISS]\n    F --> G[Armazena Resultados]\n    G -->|Retorna ao Usuário| A\n```\n\n# Componentes Chave\n### 1. API\n- **Responsabilidade**: Gerenciamento de rotas e retorno de informações ao usuário.\n- **Interfaces Públicas**: `app.include_router(v1_router)`.\n\n### 2. Banco de Dados (MongoDB)\n- **Responsabilidade**: Armazenamento de dados e metadados de documentos.\n- **Interfaces Públicas**: Métodos da classe `MongoDB` para CRUD.\n\n### 3. Gerenciador de Fila (Redis)\n- **Responsabilidade**: Gerenciamento de prioridade e estado das tarefas em execução.\n- **Interfaces Públicas**: `enqueue_task`, `get_job_status`.\n\n### 4. Cliente Azure OpenAI\n- **Responsabilidade**: Comunicação com a API da Azure OpenAI para geração de texto.\n- **Interfaces Públicas**: `get_response_text`.\n\n### 5. Cliente Google Gemini\n- **Responsabilidade**: Integração com o Google Gemini para análise de texto.\n- **Interfaces Públicas**: `get_response_text`.\n\n# Fluxo de Dados\nOs dados fluem da seguinte maneira:\n1. O usuário faz um pedido via API.\n2. A API valida e insere o pedido na fila.\n3. Um trabalhador é chamado para processar a tarefa (OCR, indexação, etc.).\n4. Resultados são retornados para a base de dados e a API é atualizada.\n5. A API responde ao usuário com os resultados ou mensagens de erro.\n\n# Configuração e Uso\n## Pré-requisitos\n- Python >= 3.13\n- MongoDB\n- Redis\n- HDFS (opcional)\n\n## Instalação\n```bash\ngit clone <url-do-repositorio>\ncd RAG-MPMG\npython -m venv venv\nvenv\\Scripts\\activate\npip install -r requirements.txt\n```\n\n## Execução da API\nPara iniciar a API, execute:\n```bash\nuvicorn main:app --host 0.0.0.0 --port 8000 --reload\n```\n\nEndpoints disponíveis:\n- API: http://localhost:8000\n- Docs: http://localhost:8000/docs\n\n# Dependências Entre Módulos\n```mermaid\ngraph TD\n    A[API] --> B[Bank MongoDB]\n    A --> C[Redis Queue]\n    C --> D[Workers]\n    D --> E[OCR]\n    D --> F[Vector Store]\n    D --> G[OpenAI Client]\n    D --> H[Google Gemini Client]\n```"
+}
+2026-02-10 09:25:37,711 | INFO     | Passo: Round 2 - Analyst    | Tokens: 104488 | Agente alcançou a resposta final.
+2026-02-10 09:25:37,712 | INFO     | Passo: Round 2 - Analyst    | Tokens: 103526 | Analista finalizou em 2 passos. Tokens estimados bloco: 51703
+2026-02-10 09:25:37,713 | INFO     | Passo: Round 2 - Critic     | Tokens: 103526 | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:25:37,713 | INFO     | Passo: Round 2 - Critic     | Tokens: 103526 | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:26:26,550 | INFO     | Passo: Round 2 - Critic     | Tokens: 103526 | Caso de Uso Finalizado. Aprovado: True, Nota: 8.545454545454545
+2026-02-10 09:26:26,553 | INFO     | Passo: Round 2 - Critic     | Tokens: 103526 | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:26:26,579 | INFO     | Passo: Round 2 - Critic     | Tokens: 103526 | Documentação salva em: generated_docs/RAG-MPMG_20260210_092626.md
+2026-02-10 09:50:59,162 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:50:59,164 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-10 09:50:59,165 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-10 09:50:59,167 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-10 09:50:59,169 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-10 09:50:59,170 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:50:59,173 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:50:59,623 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:51:01,796 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 946    | Passo 1 Saída: {
+    "thought": "Meu primeiro passo será explorar a estrutura do projeto para entender como as pastas e arquivos estão organizados.",
+    "action": "list_project_structure",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:51:01,796 | INFO     | Passo: Round 1 - Analyst    | Tokens: 946    | Executando ferramenta: list_project_structure com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:51:02,028 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 946    | Observação: RAG-MPMG/
+    docker-compose.yml
+    main.py
+    pyproject.toml
+    README.md
+    requirements.txt
+    uv.lock
+    app/
+        __init__.py
+        api/
+            v1.py
+            __init__.py
+     ...
+2026-02-10 09:51:09,100 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12310  | Passo 2 Saída: {
+    "thought": "Com a estrutura do projeto em mãos, vou começar a ler arquivos-chave para entender melhor os detalhes do projeto. Começarei pelo README.md, pois geralmente fornece uma visão geral sobre o projeto.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\README.md"
+}
+2026-02-10 09:51:09,101 | INFO     | Passo: Round 1 - Analyst    | Tokens: 12310  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\README.md
+2026-02-10 09:51:09,103 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12310  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\README.md ---
+﻿# RAG-MPMG (MP-IA)
+
+Pipeline de RAG para normas internas do MPMG, com API para processamento de
+ documentos e busca vetorial.
+
+## Sobre
+
+API p...
+2026-02-10 09:51:14,633 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 24817  | Passo 3 Saída: {
+    "thought": "Agora que tenho uma visão geral do projeto através do README.md, é essencial coletar informações sobre as dependências do projeto. Vou ler o arquivo pyproject.toml para entender melhor as tecnologias e bibliotecas utilizadas.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\pyproject.toml"
+}
+2026-02-10 09:51:14,634 | INFO     | Passo: Round 1 - Analyst    | Tokens: 24817  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\pyproject.toml
+2026-02-10 09:51:14,635 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 24817  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\pyproject.toml ---
+[project]
+name = "rag-mpmg"
+version = "0.1.0"
+description = "Pipeline de RAG para normas internas do MPMG."
+readme = "README.md"
+requires-...
+2026-02-10 09:51:18,670 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 37655  | Passo 4 Saída: {
+    "thought": "Com a leitura do arquivo pyproject.toml, agora tenho uma lista clara das dependências e requisitos do projeto. Vou continuar para o próximo passo, que é analisar o arquivo requirements.txt para ver se existem mais dependências ou especificidades nessa lista.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\requirements.txt"
+}
+2026-02-10 09:51:18,671 | INFO     | Passo: Round 1 - Analyst    | Tokens: 37655  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\requirements.txt
+2026-02-10 09:51:18,673 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 37655  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\requirements.txt ---
+aiohappyeyeballs==2.6.1
+aiohttp==3.12.14
+aiohttp-cors==0.8.1
+aiosignal==1.4.0
+annotated-types==0.7.0
+anyio==4.9.0
+attrs==25.3.0
+beautifu...
+2026-02-10 09:51:21,086 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 52155  | Passo 5 Saída: {
+    "thought": "Com as informações obtidas do arquivo requirements.txt, agora tenho uma lista abrangente de todas as dependências utilizadas no projeto. Vou prosseguir agora para a análise do código-fonte, começando pelo arquivo main.py, já que ele é geralmente o ponto de entrada de aplicações em Python.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\main.py"
+}
+2026-02-10 09:51:21,087 | INFO     | Passo: Round 1 - Analyst    | Tokens: 52155  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\main.py
+2026-02-10 09:51:21,087 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 52155  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\main.py ---
+from dotenv import load_dotenv
+import ray
+import fastapi
+from app.api.v1 import router as v1_router
+from app.core.config import Config
+
+# Carrega...
+2026-02-10 09:51:23,713 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 66951  | Passo 6 Saída: {
+    "thought": "O arquivo main.py é o ponto de entrada da aplicação, onde a API FastAPI é configurada e inicializada. O próximo passo é explorar a lógica principal do projeto, para isso, vou focar no módulo 'app/api/v1', que é o roteador da API. Começarei pela leitura do arquivo v1.py que aponta para as rotas da versão 1 da API.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\app\\api\\v1.py"
+}
+2026-02-10 09:51:23,714 | INFO     | Passo: Round 1 - Analyst    | Tokens: 66951  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\app\api\v1.py
+2026-02-10 09:51:23,715 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 66951  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\app\api\v1.py ---
+from fastapi import APIRouter, Path, Body
+from typing import Literal, Optional
+from app.schemas.geral import StandardResponse
+from app.core...
+2026-02-10 09:51:26,084 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 83421  | Passo 7 Saída: {
+    "thought": "O arquivo v1.py contém as rotas da API e lida com várias operações, incluindo geração de modelo, modificação de modelo e processamento de documentos via OCR. Agora, para entender melhor a lógica interna da aplicação, irei explorar os casos de uso onde a lógica de negócios é implementada. O próximo arquivo a ser lido será o 'queue_usecase.py'.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\app\\usecases\\queue_usecase.py"
+}
+2026-02-10 09:51:26,085 | INFO     | Passo: Round 1 - Analyst    | Tokens: 83421  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\app\usecases\queue_usecase.py
+2026-02-10 09:51:26,086 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 83421  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\app\usecases\queue_usecase.py ---
+from app.core.queue import HIGH_PRIORITY_QUEUE, DEFAULT_QUEUE, LOW_PRIORITY_QUEUE
+from app.repositories.inteligencia_reposi...
+2026-02-10 09:51:28,753 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 100283 | Passo 8 Saída: {
+    "thought": "O arquivo queue_usecase.py implementa a lógica para determinar as prioridades das tarefas baseadas na quantidade de documentos. Agora, para complementar a análise, gostaria de entender como as tarefas de processamento são executadas, portanto, focarei no gerenciamento de fila. Vou ler o arquivo 'queue.py' que está localizado no diretório 'app/core'.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\app\\core\\queue.py"
+}
+2026-02-10 09:51:28,753 | INFO     | Passo: Round 1 - Analyst    | Tokens: 100283 | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\app\core\queue.py
+2026-02-10 09:51:28,756 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 100283 | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\app\core\queue.py ---
+from redis import Redis
+from redis.exceptions import RedisError
+import json
+import uuid
+import time
+from typing import Optional, Dict, ...
+2026-02-10 09:51:31,860 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 121667 | Passo 9 Saída: {
+    "thought": "No arquivo queue.py, o QueueManager é responsável por gerenciar as filas usando Redis, suportando múltiplas prioridades e tarefas. Até agora, já temos uma boa compreensão da estrutura do código, das técnicas de gerenciamento de jobs e da forma como a API é alimentada. Vou agora explorar a parte do serviço, que gerencia a lógica de negócios, e começarei pelo 'gpt_service.py'.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\app\\services\\gpt_service.py"
+}
+2026-02-10 09:51:31,860 | INFO     | Passo: Round 1 - Analyst    | Tokens: 121667 | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\app\services\gpt_service.py
+2026-02-10 09:51:31,862 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 121667 | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\app\services\gpt_service.py ---
+from app.schemas.dto.inteligencia_dto import DataGeracaoGptDTO
+from app.repositories.inteligencia_repository import atualizar...
+2026-02-10 09:51:51,217 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 145451 | Passo 10 Saída: {
+    "thought": "O serviço gpt_service.py lida com a geração de respostas utilizando GPT (OpenAI e Google Gemini), atualiza documentos e gerencia prompts. Isso fornece uma visão crítica para entender o fluxo do sistema. Agora, vou compilar todas essas informações em uma documentação técnica organizada.",
+    "final_answer": "# Documentação Técnica do Projeto RAG-MPMG\n\n## Visão Geral do Projeto\nO projeto RAG-MPMG é um pipeline de RAG para normas internas do MPMG, que inclui uma API para processamento de documentos e busca vetorial. O sistema utiliza aprendizado de máquina para transformar documentos de normas internas (PDF/DOCX) em conhecimento consultável, com funções como OCR, extração de metadados, vetorização e indexação.\n\n### Funcionalidades Principais\n- Processamento de documentos via OCR.\n- Extração de texto e normalização.\n- Chunking de documentos normativos.\n- Extração de metadados e informações relevantes.\n- Geração de respostas utilizando GPT via OpenAI e Google Gemini.\n- API REST com suporte a FastAPI.\n\n## Tecnologias e Dependências\n- **Python**: >= 3.13\n- **FastAPI**: 0.115.14\n- **Ray**: 2.47.1\n- **Redis**: Para gerenciamento de filas e status de jobs.\n- **MongoDB**: Para armazenamento de documentos processados.\n- **OpenAI**: Cliente para interações com a API da OpenAI.\n- **Google Gemini**: Para interações com a API de geração de modelo.\n- **Faiss**: Para indexação vetorial.\n- **SURYA OCR**: Para extração de texto de imagens.\n\n### Lista de Dependências\n- faiss-cpu>=1.13.2\n- neo4j>=6.1.0\n- fastapi-cloud-cli==0.1.4\n- pymongo==4.13.2\n- rich==14.0.0\n- e mais...\n\n## Arquitetura do Sistema\nA arquitetura é baseada em uma arquitetura de microserviços utilizando FastAPI para a API e múltiplas filas de tarefas gerenciadas pelo Redis. O fluxo de dados é gerido utilizando o Ray, que possibilita o processamento distribuído. \n\n```mermaid\ngraph TD;\n    A[Usuário] -->|Consulta| B[API FastAPI];\n    B --> C[QueueManager];\n    C -->|Enfileira jobs| D[Redis];\n    D -->|Processamento| E[AzureOpenAIClient / GoogleGeminiClient];\n    E -->|Gera resposta| F[MongoDB];\n    F -->|Atualiza status| G[API FastAPI];\n    G -->|Retorna resposta| A;\n``` \n\n## Fluxo de Execução\n1. O usuário faz uma requisição para a API FastAPI.\n2. A API processa a requisição e enfileira uma tarefa no QueueManager.\n3. O QueueManager armazena a tarefa no Redis.\n4. As tarefas são processadas em background usando o Ray.\n5. A resposta gerada é armazenada no MongoDB e o status é atualizado.\n6. A API retorna a resposta final ao usuário.\n\n## Componentes Chave\n1. **main.py**: Configura e inicia a aplicação FastAPI.\n2. **v1.py**: Contém as rotas principais da API.\n3. **queue.py**: Gerencia as filas de tarefas usando Redis.\n4. **gpt_service.py**: Segmento responsável pela geração de resultados utilizando modelos GPT.\n5. **queue_usecase.py**: Define a lógica para determinar a prioridade das tarefas.\n\n## Pontos de Melhoria\n- Implementar testes automatizados para as rotas da API e as funções principais.\n- Considerar uma estratégia de escalabilidade para o banco de dados MongoDB.\n- Melhorar a documentação de endpoints com exemplos de requisições e respostas.\n- Adicionar monitoramento e logs detalhados para rastreamento de erros e desempenho.\n\n---\nDesenvolvido para o MPMG."
+}
+2026-02-10 09:51:51,218 | INFO     | Passo: Round 1 - Analyst    | Tokens: 145451 | Agente alcançou a resposta final.
+2026-02-10 09:51:51,219 | INFO     | Passo: Round 1 - Analyst    | Tokens: 23784  | Analista finalizou em 10 passos. Tokens estimados bloco: 23784
+2026-02-10 09:51:51,221 | INFO     | Passo: Round 1 - Critic     | Tokens: 23784  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:51:51,222 | INFO     | Passo: Round 1 - Critic     | Tokens: 23784  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:52:17,969 | INFO     | Passo: Round 1 - Critic     | Tokens: 23784  | Caso de Uso Finalizado. Aprovado: False, Nota: 7.83
+2026-02-10 09:52:17,969 | INFO     | Passo: Round 1 - Critic     | Tokens: 23784  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:52:17,971 | INFO     | Passo: Round 2 - Analyst    | Tokens: 23784  | Analista está lendo arquivos e gerando documentação...
+2026-02-10 09:52:17,975 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 23784  | Loaded API Key: sk-or-v1-9...
+2026-02-10 09:52:18,360 | INFO     | Passo: Round 2 - Analyst    | Tokens: 23784  | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-10 09:52:20,041 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 24798  | Passo 1 Saída: {
+    "thought": "O primeiro passo é explorar a estrutura do projeto para entender como as pastas e arquivos estão organizados.",
+    "action": "list_project_structure",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-10 09:52:20,043 | INFO     | Passo: Round 2 - Analyst    | Tokens: 24798  | Executando ferramenta: list_project_structure com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-10 09:52:20,082 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 24798  | Observação: RAG-MPMG/
+    docker-compose.yml
+    main.py
+    pyproject.toml
+    README.md
+    requirements.txt
+    uv.lock
+    app/
+        __init__.py
+        api/
+            v1.py
+            __init__.py
+     ...
+2026-02-10 09:52:31,851 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 36245  | Passo 2 Saída: {
+    "thought": "Agora que tenho a estrutura do projeto, o próximo passo é ler arquivos chave para compreender seu propósito e dependências. Começarei pelo README.md, pyproject.toml e requirements.txt, pois eles geralmente fornecem informações sobre o funcionamento do projeto e suas dependências.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\README.md"
+}
+2026-02-10 09:52:31,851 | INFO     | Passo: Round 2 - Analyst    | Tokens: 36245  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\README.md
+2026-02-10 09:52:31,852 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 36245  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\README.md ---
+﻿# RAG-MPMG (MP-IA)
+
+Pipeline de RAG para normas internas do MPMG, com API para processamento de
+ documentos e busca vetorial.
+
+## Sobre
+
+API p...
+2026-02-10 09:52:42,723 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 48850  | Passo 3 Saída: {
+    "thought": "O README.md forneceu uma visão geral detalhada do projeto, descrevendo suas funcionalidades, arquitetura e tecnologias empregadas. O próximo passo é ler o arquivo pyproject.toml para identificar dependências e informações de configuração, assim como fazer uma leitura do requirements.txt para verificar bibliotecas adicionais.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\pyproject.toml"
+}
+2026-02-10 09:52:42,724 | INFO     | Passo: Round 2 - Analyst    | Tokens: 48850  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\pyproject.toml
+2026-02-10 09:52:42,725 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 48850  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\pyproject.toml ---
+[project]
+name = "rag-mpmg"
+version = "0.1.0"
+description = "Pipeline de RAG para normas internas do MPMG."
+readme = "README.md"
+requires-...
+2026-02-10 09:52:51,132 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 61781  | Passo 4 Saída: {
+    "thought": "O arquivo pyproject.toml especifica várias dependências essenciais para o funcionamento do projeto. Agora vou ler o requirements.txt para confirmar as bibliotecas e suas versões, além de quaisquer outras dependências que possam estar listadas.",
+    "action": "read_specific_file",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG\\requirements.txt"
+}
+2026-02-10 09:52:51,133 | INFO     | Passo: Round 2 - Analyst    | Tokens: 61781  | Executando ferramenta: read_specific_file com entrada: C:\Projetos Estudos\RAG\RAG-MPMG\requirements.txt
+2026-02-10 09:52:51,134 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 61781  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\requirements.txt ---
+aiohappyeyeballs==2.6.1
+aiohttp==3.12.14
+aiohttp-cors==0.8.1
+aiosignal==1.4.0
+annotated-types==0.7.0
+anyio==4.9.0
+attrs==25.3.0
+beautifu...
+2026-02-10 09:53:40,189 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 77262  | Passo 5 Saída: {
+    "thought": "Agora que obtive as informações sobre as dependências do projeto a partir do README, do pyproject.toml e do requirements.txt, posso começar a elaborar a documentação técnica. A próxima etapa será sintetizar essas informações e estruturar a documentação conforme as seções solicitadas.",
+    "final_answer": "# Documentação Técnica do Projeto RAG-MPMG\n\n## Visão Geral do Projeto\n\nO projeto RAG-MPMG (MP-IA) é um pipeline de Recuperação de Resposta Aumentada (RAG) desenvolvido para as normas internas do Ministério Público de Minas Gerais (MPMG). O sistema oferece uma API para o processamento de documentos e busca vetorial, transformando documentos normativos (PDF/DOCX) em conhecimento consultável com filtros normativos. Principais funcionalidades incluem OCR de documentos, extração de metadados, e busca híbrida.\n\n## Tecnologias e Dependências\n\nO projeto utiliza as seguintes tecnologias e bibliotecas:  \n- **FastAPI**: 0.115.14  \n- **Ray**: 2.47.1  \n- **FAISS**: 1.13.2  \n- **MongoDB**: vária conforme instalação local  \n- **SQL Server**: vária conforme instalação local  \n- **HDFS**: 2.7.3  \n- **Surya OCR**: 0.14.6  \n- **PyMuPDF**: 1.26.1  \n- **OpenAI**: 1.93.0  \n- **NumPy**: 2.4.1  \n- **Sentence Transformers**: 5.2.0  \n\nOutras dependências incluem `requests`, `pydantic`, `redis`, entre outros, conforme detalhado em `requirements.txt`.\n\n## Arquitetura do Sistema\n\nO sistema é organizado em uma arquitetura modular dividida nas seguintes componentes principais:\n- **app/**: Contém a API, camadas de serviço, repositórios e esquemas de dados.  \n- **RAG/**: Inclui a implementação do pipeline RAG para processamento e análise de documentos.  \n- **scripts/**: Scripts utilitários para operação e configuração do sistema.  \n- **static/**: Arquivos estáticos e templates utilizados pela API.  \n\nUm diagrama de arquitetura básico pode ser representado com o Mermaid:\n```\ngraph TD;\n    A[API: FastAPI] --> B[app/]\n    B --> C[services/]\n    B --> D[repositories/]\n    B --> E[schemas/]\n    A --> F[RAG Pipeline]\n    F --> G[Processamento de Documentos]\n```\n\n## Fluxo de Execução\n\nO fluxo principal de execução do projeto inicia com a API FastAPI que gerencia as requisições. O processo pode ser descrito da seguinte maneira:\n1. **Entrada**: O usuário envia um pedido através da API (e.g., uma requisição POST para `/v1/gerar-modelo/{id}`).  \n2. **Lógica**: O sistema processa os documentos, executando OCR, extraindo texto e metadados, e vetorizando os dados.  \n3. **Saída**: Respostas geradas são retornadas ao usuário ou armazenadas em um banco de dados.  \n\n## Componentes Chave\n\n1. **app/api**: Define as rotas e endpoints da API.  \n2. **app/services**: Contém a lógica de negócio e manipulação de dados.  \n3. **RAG/**: Implementação do pipeline de RAG, incluindo procesamiento, consulta e resposta.  \n4. **app/repositories**: Manipula a interação com o banco de dados (MongoDB, SQL, etc.).  \n5. **app/schemas**: Define estruturas e validações de dados utilizando Pydantic.\n\n## Pontos de Melhoria\n\n- **Documentação**: Expandir a documentação técnica para incluir exemplos de uso da API.  \n- **Testes**: Adicionar cobertura de testes mais robusta para garantir a estabilidade do sistema.  \n- **Desempenho**: Avaliar e otimizar partes do código que podem ser ineficientes, especialmente em operações de I/O.\n- **Monitoramento**: Implementar melhores práticas de monitoramento para a operação do sistema em produção, especialmente ao lidar com grandes volumes de dados."
+}
+2026-02-10 09:53:40,191 | INFO     | Passo: Round 2 - Analyst    | Tokens: 77262  | Agente alcançou a resposta final.
+2026-02-10 09:53:40,192 | INFO     | Passo: Round 2 - Analyst    | Tokens: 39265  | Analista finalizou em 5 passos. Tokens estimados bloco: 15481
+2026-02-10 09:53:40,193 | INFO     | Passo: Round 2 - Critic     | Tokens: 39265  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-10 09:53:40,193 | INFO     | Passo: Round 2 - Critic     | Tokens: 39265  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-10 09:53:58,878 | INFO     | Passo: Round 2 - Critic     | Tokens: 39265  | Caso de Uso Finalizado. Aprovado: True, Nota: 8.0
+2026-02-10 09:53:58,879 | INFO     | Passo: Round 2 - Critic     | Tokens: 39265  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-10 09:53:58,881 | INFO     | Passo: Round 2 - Critic     | Tokens: 39265  | Documentação salva em: generated_docs/RAG-MPMG_20260210_095358.md
+2026-02-11 10:24:57,966 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:24:57,969 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-11 10:24:57,970 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-11 10:24:57,970 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-11 10:24:57,971 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-11 10:24:57,973 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-11 10:24:57,974 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-11 10:24:58,789 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-11 10:25:03,150 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 979    | Passo 1 Saída: {
+    "thought": "O primeiro passo é explorar a estrutura do projeto para entender sua organização e quais arquivos estão disponíveis para análise.",
+    "action": "list_project_structure",
+    "action_input": ""
+}
+2026-02-11 10:25:03,152 | INFO     | Passo: Round 1 - Analyst    | Tokens: 979    | Executando ferramenta: list_project_structure com entrada: 
+2026-02-11 10:25:03,153 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 979    | Observação: Error: Directory '' does not exist....
+2026-02-11 10:25:04,356 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 2029   | Passo 2 Saída: {
+    "thought": "Parece que houve um erro ao tentar listar a estrutura do projeto. Vou tentar ler os arquivos do projeto diretamente para coletar informações.",
+    "action": "read_project_files",
+    "action_input": ""
+}
+2026-02-11 10:25:04,356 | INFO     | Passo: Round 1 - Analyst    | Tokens: 2029   | Executando ferramenta: read_project_files com entrada: 
+2026-02-11 10:25:04,358 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 2029   | Observação: Error: Directory '' does not exist....
+2026-02-11 10:25:06,083 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 3181   | Passo 3 Saída: {
+    "thought": "Estou enfrentando dificuldades em acessar a estrutura do projeto. Vou precisar de um comando para especificar um diretório ou um caminho válido. Vou buscar mais informações ou entender se há um comando alternativo para explorar o projeto.",
+    "action": "web_search",
+    "action_input": "como listar a estrutura de diretório de um projeto sem diretório específico"
+}
+2026-02-11 10:25:06,085 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 3181   | Observação: Erro: Ferramenta 'web_search' não encontrada....
+2026-02-11 10:25:07,514 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 4427   | Passo 4 Saída: {
+    "thought": "Parece que estou limitado em acesso e não posso realizar pesquisas na web. Vou tentar novamente listar a estrutura do projeto, mas pode ser que eu não tenha permissões para acesso. Preciso confirmar isso.",
+    "action": "list_project_structure",
+    "action_input": ""
+}
+2026-02-11 10:25:07,514 | INFO     | Passo: Round 1 - Analyst    | Tokens: 4427   | Executando ferramenta: list_project_structure com entrada: 
+2026-02-11 10:25:07,515 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 4427   | Observação: Error: Directory '' does not exist....
+2026-02-11 10:25:09,723 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 5798   | Passo 5 Saída: {
+    "thought": "Como não consegui acessar diretamente a estrutura do projeto e não tenho permissão para realizar outras operações, isso pode indicar que estou sem um diretório configurado ou que o projeto não está acessível. Precisarei de uma abordagem diferente ou de uma indicação do diretório correto para continuar a análise.",
+    "final_answer": "Não foi possível acessar a estrutura do projeto ou arquivos devido à falta de diretório especificado. É necessário fornecer um caminho válido para prosseguir com a análise."
+}
+2026-02-11 10:25:09,724 | INFO     | Passo: Round 1 - Analyst    | Tokens: 5798   | Agente alcançou a resposta final.
+2026-02-11 10:25:09,730 | INFO     | Passo: Round 1 - Analyst    | Tokens: 1371   | Analista finalizou em 5 passos. Tokens estimados bloco: 1371
+2026-02-11 10:25:09,731 | INFO     | Passo: Round 1 - Critic     | Tokens: 1371   | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-11 10:25:09,734 | INFO     | Passo: Round 1 - Critic     | Tokens: 1371   | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-11 10:25:26,273 | INFO     | Passo: Round 1 - Critic     | Tokens: 1371   | Caso de Uso Finalizado. Aprovado: False, Nota: 4.0
+2026-02-11 10:25:26,273 | INFO     | Passo: Round 1 - Critic     | Tokens: 1371   | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-11 10:25:26,276 | INFO     | Passo: Round 2 - Analyst    | Tokens: 1371   | Analista está lendo arquivos e gerando documentação...
+2026-02-11 10:25:26,278 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 1371   | Loaded API Key: sk-or-v1-9...
+2026-02-11 10:25:26,688 | INFO     | Passo: Round 2 - Analyst    | Tokens: 1371   | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-11 10:25:28,418 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 2403   | Passo 1 Saída: {
+    "thought": "O primeiro passo é explorar a estrutura do projeto para entender quais arquivos e diretórios ele contém. Isso ajudará na análise do código e na criação da documentação detalhada.",
+    "action": "list_project_structure",
+    "action_input": ""
+}
+2026-02-11 10:25:28,419 | INFO     | Passo: Round 2 - Analyst    | Tokens: 2403   | Executando ferramenta: list_project_structure com entrada: 
+2026-02-11 10:25:28,420 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 2403   | Observação: Error: Directory '' does not exist....
+2026-02-11 10:25:29,957 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 3508   | Passo 2 Saída: {
+    "thought": "Parece que a ferramenta não conseguiu acessar a estrutura do projeto por alguma razão. Vou tentar ler os arquivos do projeto diretamente para coletar informações.",
+    "action": "read_project_files",
+    "action_input": ""
+}
+2026-02-11 10:25:29,958 | INFO     | Passo: Round 2 - Analyst    | Tokens: 3508   | Executando ferramenta: read_project_files com entrada: 
+2026-02-11 10:25:29,959 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 3508   | Observação: Error: Directory '' does not exist....
+2026-02-11 10:25:33,326 | DEBUG    | Passo: Round 2 - Analyst    | Tokens: 4714   | Passo 3 Saída: {
+    "thought": "Parece que há um problema em acessar os arquivos do projeto. Talvez eu precise de um caminho específico para acessar a estrutura do projeto. Como não consigo acessar as informações, não posso prosseguir. Vou encerrar o processo.",
+    "final_answer": "Não foi possível acessar a estrutura ou os arquivos do projeto devido a um erro de diretório inexistente."
+}
+2026-02-11 10:25:33,327 | INFO     | Passo: Round 2 - Analyst    | Tokens: 4714   | Agente alcançou a resposta final.
+2026-02-11 10:25:33,328 | INFO     | Passo: Round 2 - Analyst    | Tokens: 2577   | Analista finalizou em 3 passos. Tokens estimados bloco: 1206
+2026-02-11 10:25:33,329 | INFO     | Passo: Round 2 - Critic     | Tokens: 2577   | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-11 10:25:33,330 | INFO     | Passo: Round 2 - Critic     | Tokens: 2577   | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-11 10:25:37,441 | INFO     | Passo: Round 2 - Critic     | Tokens: 2577   | Caso de Uso Finalizado. Aprovado: False, Nota: 5.0
+2026-02-11 10:25:37,452 | INFO     | Passo: Round 2 - Critic     | Tokens: 2577   | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-11 10:25:37,460 | INFO     | Passo: Round 3 - Analyst    | Tokens: 2577   | Analista está lendo arquivos e gerando documentação...
+2026-02-11 10:25:37,464 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 2577   | Loaded API Key: sk-or-v1-9...
+2026-02-11 10:25:38,836 | INFO     | Passo: Round 3 - Analyst    | Tokens: 2577   | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-11 10:25:40,253 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 3598   | Passo 1 Saída: {
+    "thought": "O primeiro passo é entender a estrutura do projeto para identificar os arquivos relevantes para fazer a análise detalhada.",
+    "action": "list_project_structure",
+    "action_input": ""
+}
+2026-02-11 10:25:40,256 | INFO     | Passo: Round 3 - Analyst    | Tokens: 3598   | Executando ferramenta: list_project_structure com entrada: 
+2026-02-11 10:25:40,257 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 3598   | Observação: Error: Directory '' does not exist....
+2026-02-11 10:25:41,699 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 4701   | Passo 2 Saída: {
+    "thought": "Parece que houve um erro ao tentar listar a estrutura do projeto. Vou tentar usar a ferramenta 'read_project_files' para ler todos os arquivos de texto e obter detalhes sobre o projeto.",
+    "action": "read_project_files",
+    "action_input": ""
+}
+2026-02-11 10:25:41,700 | INFO     | Passo: Round 3 - Analyst    | Tokens: 4701   | Executando ferramenta: read_project_files com entrada: 
+2026-02-11 10:25:41,701 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 4701   | Observação: Error: Directory '' does not exist....
+2026-02-11 10:25:43,936 | DEBUG    | Passo: Round 3 - Analyst    | Tokens: 5954   | Passo 3 Saída: {
+    "thought": "Ocorreu um erro ao tentar acessar os diretórios do projeto novamente. Isso pode indicar que não há um ambiente de projeto apropriado ou que estou fora do contexto. Vou reconsiderar os passos. Precisamos garantir que o diretório esteja acessível ou determinar se há uma configuração ausente. Caso contrário, não poderei prosseguir. Vou precisar de mais informações agora.",
+    "final_answer": "Não consegui acessar os diretórios ou arquivos do projeto para realizar a análise. Por favor, verifique a configuração do projeto e certifique-se de que estou no diretório correto antes de tentar novamente."
+}
+2026-02-11 10:25:43,938 | INFO     | Passo: Round 3 - Analyst    | Tokens: 5954   | Agente alcançou a resposta final.
+2026-02-11 10:25:43,939 | INFO     | Passo: Round 3 - Analyst    | Tokens: 3830   | Analista finalizou em 3 passos. Tokens estimados bloco: 1253
+2026-02-11 10:25:43,942 | INFO     | Passo: Round 3 - Critic     | Tokens: 3830   | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-11 10:25:43,945 | INFO     | Passo: Round 3 - Critic     | Tokens: 3830   | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-11 10:25:48,180 | INFO     | Passo: Round 3 - Critic     | Tokens: 3830   | Caso de Uso Finalizado. Aprovado: False, Nota: 5.0
+2026-02-11 10:25:48,187 | INFO     | Passo: Round 3 - Critic     | Tokens: 3830   | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-11 10:28:31,488 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:28:31,489 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-11 10:28:31,490 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-11 10:28:31,491 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-11 10:28:31,492 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-11 10:28:31,494 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-11 10:28:31,496 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-11 10:28:32,001 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-11 10:28:34,011 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1042   | Passo 1 Saída: {
+    "thought": "Meu primeiro passo deve ser explorar a estrutura do projeto para entender quais arquivos estão presentes e como eles estão organizados.",
+    "action": "list_project_structure",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-11 10:28:34,013 | INFO     | Passo: Round 1 - Analyst    | Tokens: 1042   | Executando ferramenta: list_project_structure com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:28:34,264 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1042   | Observação: RAG-MPMG/
+    docker-compose.yml
+    main.py
+    pyproject.toml
+    README.md
+    requirements.txt
+    uv.lock
+    app/
+        __init__.py
+        api/
+            v1.py
+            __init__.py
+     ...
+2026-02-11 10:28:39,625 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12491  | Passo 2 Saída: {
+    "thought": "A estrutura do projeto foi mapeada com sucesso, e agora é necessário ler os arquivos principais para realizar uma análise detalhada do código e documentação técnica.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-11 10:28:39,626 | INFO     | Passo: Round 1 - Analyst    | Tokens: 12491  | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:28:40,159 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12491  | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-11 10:29:19,803 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 74889  | Passo 3 Saída: {
+    "thought": "As informações foram obtidas com sucesso a partir dos arquivos principais do projeto. Agora, irei começar a organizar e detalhar a documentação técnica em formato exaustivo, assegurando que todas as classes, métodos, variáveis e fluxo de dados sejam abordados de maneira detalhada.",
+    "final_answer": {
+        "Visão Geral Detalhada": {
+            "Contexto": "O projeto RAG-MPMG é um sistema de processamento e gestão de normas do Ministério Público de Minas Gerais, utilizando técnicas de Inteligência Artificial (IA). Ele inclui um pipeline de extração de dados e informações de documentos legais.",
+            "Propósito": "O sistema visa transformar documentos em conhecimento consultável, possibilitando busca eficiente e recuperação de informações relevantes através do uso de técnicas de vetorização e indexação.",
+            "Regras de Negócio": "Inclui o tratamento e armazenamento de documentos, processamento de OCR, geração de respostas e integração com tecnologias de IA como Azure OpenAI e Google Gemini."
+        },
+        "Tecnologias e Versões": {
+            "Python": ">=3.13",
+            "Dependências do pyproject.toml": {
+                "faiss-cpu": ">=1.13.2",
+                "neo4j": ">=6.1.0",
+                "numpy": ">=2.4.1",
+                "python-dotenv": ">=1.2.1",
+                "qdrant-client": ">=1.16.2",
+                "sentence-transformers": ">=5.2.0",
+                "pymupdf": ">=1.25.0",
+                "openai": ">=1.10.0",
+                "spacy": ">=3.7.0",
+                "langdetect": ">=1.0.9",
+                "requests": ">=2.31.0"
+            },
+            "Outras Dependências do requirements.txt": "O arquivo contém inúmeras bibliotecas e suas respectivas versões, incluindo apoio para FastAPI, Redis, MongoDB, entre outros que são essenciais para o funcionamento do sistema."
+        },
+        "Arquitetura do Sistema": {
+            "Diagrama Mermaid": "```mermaid\n    graph TD;\n    A[Cliente] -->|Solicitação| B[FastAPI]\n    B --> C{Estado da Solicitação}\n    C -->|Processar| D[Serviço de OCR]\n    C -->|Gerar| E[Geração de Modelo]\n    D --> F[Armazenar no MongoDB]\n    E --> G[Vector Store]\n    F --> H[Retornar Resposta]\n    H --> A;\n```",
+            "Descrição": "O sistema é dividido em camadas principais: a camada de apresentação (FastAPI), uma camada de serviços (para processamento de OCR e geração de modelos), e a camada de persistência (MongoDB e Vector Store)."
+        },
+        "ANÁLISE DE CÓDIGO": {
+            "main.py": {
+                "Propósito": "Inicia a aplicação FastAPI e configura as rotas da API.",
+                "Classes": [],
+                "Métodos Principais": {
+                    "main": {
+                        "Descrição": "Função principal que inicia o servidor FastAPI.",
+                        "Entradas": [],
+                        "Saídas": ["FastAPI App"]
+                    }
+                },
+                "Variáveis Constantes ou Configurações Importantes": {
+                    "app": "Instância do aplicativo FastAPI configurada com título e versão.",
+                    "load_dotenv": "Carrega variáveis de ambiente do arquivo .env."
+                }
+            },
+            "app/core/config.py": {
+                "Propósito": "Classe de configuração que carrega variáveis de ambiente.",
+                "Classes": ["Config"],
+                "Métodos Principais": {
+                    "__init__": {
+                        "Descrição": "Inicializa as configurações, carregando variáveis de ambiente.",
+                        "Entradas": [],
+                        "Saídas": [],
+                        "Lógica": "Define todas as variáveis necessárias, como conexões de banco de dados e parâmetros de API."
+                    }
+                }
+            },
+            "app/api/v1.py": {
+                "Propósito": "Define as rotas da API da versão 1.",
+                "Classes": [],
+                "Métodos Principais": {
+                    "gerar_minuta_endpoint": {
+                        "Descrição": "Gera uma minuta baseada em um ID.",
+                        "Entradas": ["id: str"],
+                        "Saídas": ["StandardResponse"],
+                        "Lógica": "Enfileira uma tarefa para o processamento e retorna o job_id."
+                    },
+                    "ocr_documentos_processo_endpoint": {
+                        "Descrição": "Executa OCR em documentos de um processo específico.",
+                        "Entradas": ["id: str", "tipo: str", "login: str", "arquivos: Optional[list[str]]", "vector_store_id: Optional[str]"],
+                        "Saídas": ["StandardResponse"],
+                        "Lógica": "Enfileira uma tarefa de OCR, retornando o job_id."
+                    }
+                }
+            },
+            "app/core/logger.py": {
+                "Propósito": "Classe de logging configurável para a aplicação.",
+                "Classes": ["Logger"],
+                "Métodos Principais": {
+                    "__init__": {
+                        "Descrição": "Inicializa o logger com um arquivo de log.",
+                        "Entradas": ["name: str", "log_file_name: Optional[str]"],
+                        "Saídas": [],
+                        "Lógica": "Define o nome do arquivo e configura o nível de log."
+                    },
+                    "info": {
+                        "Descrição": "Log de nível INFO.",
+                        "Entradas": ["message: str"],
+                        "Saídas": [],
+                        "Lógica": "Registra uma mensagem no log com nível INFO."
+                    }
+                }
+            },
+            "app/core/queue.py": {
+                "Propósito": "Gerencia a fila de processamento usando Redis.",
+                "Classes": ["QueueManager"],
+                "Métodos Principais": {
+                    "enqueue_task": {
+                        "Descrição": "Adiciona uma nova tarefa à fila.",
+                        "Entradas": ["data: Dict[str, Any]", "queue: str"],
+                        "Saídas": ["job_id: str"],
+                        "Lógica": "Enfileira a tarefa na fila especificada e salva seu estado como 'pending'."
+                    },
+                    "dequeue_task": {
+                        "Descrição": "Remove uma tarefa da fila.",
+                        "Entradas": ["queues: Optional[List[str]]", "block: bool", "timeout: int"],
+                        "Saídas": ["Tuple[str, Dict[str, Any]]"],
+                        "Lógica": "Remove e retorna um job da fila."
+                    }
+                }
+            }
+        },
+        "Fluxos de Dados Completo": "O fluxo de dados é iniciado quando um cliente faz uma solicitação à API, que por sua vez invoca os serviços apropriados com informações do banco de dados, processa a informação e armazena os resultados novamente antes de responder ao cliente."
+    }
+}
+2026-02-11 10:29:19,805 | INFO     | Passo: Round 1 - Analyst    | Tokens: 74889  | Agente alcançou a resposta final.
+2026-02-11 10:29:19,807 | INFO     | Passo: Round 1 - Analyst    | Tokens: 62398  | Analista finalizou em 3 passos. Tokens estimados bloco: 62398
+2026-02-11 10:29:55,548 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:29:55,549 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-11 10:29:55,549 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-11 10:29:55,551 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-11 10:29:55,552 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-11 10:29:55,553 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-11 10:29:56,039 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-11 10:29:57,710 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1038   | Passo 1 Saída: {
+    "thought": "O primeiro passo é explorar a estrutura do projeto para entender sua organização e os arquivos que contém.",
+    "action": "list_project_structure",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-11 10:29:57,711 | INFO     | Passo: Round 1 - Analyst    | Tokens: 1038   | Executando ferramenta: list_project_structure com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:29:57,783 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1038   | Observação: RAG-MPMG/
+    docker-compose.yml
+    main.py
+    pyproject.toml
+    README.md
+    requirements.txt
+    uv.lock
+    app/
+        __init__.py
+        api/
+            v1.py
+            __init__.py
+     ...
+2026-02-11 10:29:59,449 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12486  | Passo 2 Saída: {
+    "thought": "Agora que obtive a estrutura do projeto, posso prosseguir para ler os arquivos relevantes e coletar informações mais detalhadas sobre a funcionalidade e a implementação do projeto.",
+    "action": "read_project_files",
+    "action_input": "C:\\Projetos Estudos\\RAG\\RAG-MPMG"
+}
+2026-02-11 10:29:59,451 | INFO     | Passo: Round 1 - Analyst    | Tokens: 12486  | Executando ferramenta: read_project_files com entrada: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:29:59,487 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12486  | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-11 10:30:30,956 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 74792  | Passo 3 Saída: {
+    "thought": "A análise inicial dos arquivos foi realizada. Agora, vou estruturar a documentação técnica com base nas informações coletadas, organizando-as em seções como Visão Geral, Tecnologias e Versões, Arquitetura do Sistema e Análise de Código.",
+    "final_answer": {
+        "Visão Geral": {
+            "Contexto": "O projeto RAG-MPMG é um pipeline de RAG (Retrieval-Augmented Generation) para processamento de documentos jurídicos relacionados às normas internas do Ministério Público de Minas Gerais (MPMG). A API do projeto permite o processamento de documentos via OCR (Reconhecimento Óptico de Caracteres) e busca vetorial.",
+            "Propósito": "Transformar normas internas (PDF/DOCX) em conhecimento consultável, utilizando filtros normativos e oferecendo respostas baseadas em inteligência artificial.",
+            "Regras de Negócio": [
+                "Processamento de documentos com OCR e extração de metadados.",
+                "Busca vetorial indexada utilizando a biblioteca FAISS.",
+                "API REST para comunicação com clientes e serviços."
+            ]
+        },
+        "Tecnologias e Versões": {
+            "Requisitos": {
+                "Python": ">=3.13",
+                "Bibliotecas": {
+                    "faiss-cpu": ">=1.13.2",
+                    "neo4j": ">=6.1.0",
+                    "numpy": ">=2.4.1",
+                    "python-dotenv": ">=1.2.1",
+                    "qdrant-client": ">=1.16.2",
+                    "sentence-transformers": ">=5.2.0",
+                    "pymupdf": ">=1.25.0",
+                    "openai": ">=1.10.0",
+                    "spacy": ">=3.7.0",
+                    "langdetect": ">=1.0.9",
+                    "requests": ">=2.31.0"
+                }
+            }
+        },
+        "Arquitetura do Sistema": {
+            "Diagrama": "```mermaid\ngraph LR\n    A[Frontend] -->|API Requests| B[FastAPI]\n    B -->|Processamento| C[Serviços]\n    C -->|Banco de Dados| D[MongoDB]\n    C -->|Queue| E[Redis]\n    B -->|Modelo| F[OpenAI/Azure]\n    B -->|Modelo| G[Google Gemini]\n```",
+            "Camadas": [
+                {
+                    "Nome": "Camada de Apresentação",
+                    "Descrição": "Responsável por interagir com o cliente via API REST.",
+                    "Tecnologia": "FastAPI"
+                },
+                {
+                    "Nome": "Camada de Serviço",
+                    "Descrição": "Realiza a lógica de negócio e se comunica com os bancos de dados.",
+                    "Objetos": [
+                        "gpt_service.py",
+                        "ocr_service.py",
+                        "vector_store_service.py"
+                    ]
+                },
+                {
+                    "Nome": "Camada de Persistência",
+                    "Descrição": "Interage com os bancos de dados NoSQL e SQL.",
+                    "Objetos": [
+                        "mongodb.py",
+                        "sqlsrv.py",
+                        "redis.py"
+                    ]
+                },
+                {
+                    "Nome": "Camada de Integração",
+                    "Descrição": "Integra com APIs externas para processamento de IA.",
+                    "Objetos": [
+                        "openai_client.py",
+                        "google_gemini.py",
+                        "azure_openai.py"
+                    ]
+                }
+            ]
+        },
+        "ANÁLISE DE CÓDIGO": {
+            "Arquivos Importantes": [
+                {
+                    "Arquivo": "main.py",
+                    "Propósito": "Arquivo principal que inicializa a aplicação FastAPI.",
+                    "Classes": [
+                        "Config",
+                        "FastAPI"
+                    ],
+                    "Métodos Principais": [
+                        {
+                            "Nome": "__init__",
+                            "Entradas": "None",
+                            "Saídas": "Instância do FastAPI configurada.",
+                            "Lógica": "Carrega as variáveis de ambiente e inicializa a API."
+                        }
+                    ]
+                },
+                {
+                    "Arquivo": "app/api/v1.py",
+                    "Propósito": "Define as rotas da API para a versão 1.",
+                    "Classes": [
+                        "APIRouter"
+                    ],
+                    "Métodos Principais": [
+                        {
+                            "Nome": "root",
+                            "Entradas": "None",
+                            "Saídas": "StandardResponse",
+                            "Lógica": "Retorna uma mensagem de boas-vindas."
+                        },
+                        {
+                            "Nome": "gerar_minuta_endpoint",
+                            "Entradas": "id: str",
+                            "Saídas": "StandardResponse",
+                            "Lógica": "Enfileira uma tarefa para gerar uma minuta."
+                        },
+                        {
+                            "Nome": "ocr_documentos_processo_endpoint",
+                            "Entradas": "id, tipo, login, arquivos, vector_store_id",
+                            "Saídas": "StandardResponse",
+                            "Lógica": "Enfileira uma tarefa para realizar OCR em documentos de processo."
+                        }
+                    ]
+                },
+                {
+                    "Arquivo": "app/core/config.py",
+                    "Propósito": "Carrega e gerencia as configurações do sistema.",
+                    "Classes": [
+                        "Config"
+                    ],
+                    "Métodos Principais": [
+                        {
+                            "Nome": "__init__",
+                            "Entradas": "None",
+                            "Saídas": "None",
+                            "Lógica": "Carrega variáveis de configuração do ambiente."
+                        }
+                    ]
+                },
+                {
+                    "Arquivo": "app/core/queue.py",
+                    "Propósito": "Gerenciador de filas para tarefas assíncronas.",
+                    "Classes": [
+                        "QueueManager"
+                    ],
+                    "Métodos Principais": [
+                        {
+                            "Nome": "enqueue_task",
+                            "Entradas": "{'task': your_task_function, 'args': your_args}",
+                            "Saídas": "job_id",
+                            "Lógica": "Adiciona a tarefa à fila e registra o status."
+                        }
+                    ]
+                }
+                ]
+        },
+        "Fluxos de Dados Completo": "O fluxo de dados típico passa pelo seguinte processo: O cliente faz uma requisição à API, que ativa um endpoint que gera uma minuta ou realiza OCR. Essa requisição é enfileirada no Redis, onde é processada por um worker que interage com o sistema de arquivos e bancos de dados. Os dados são então retornados à API e enviados de volta ao cliente."
+    }
+}
+2026-02-11 10:30:30,969 | INFO     | Passo: Round 1 - Analyst    | Tokens: 74792  | Agente alcançou a resposta final.
+2026-02-11 10:30:30,984 | INFO     | Passo: Round 1 - Analyst    | Tokens: 62306  | Analista finalizou em 3 passos. Tokens estimados bloco: 62306
+2026-02-11 10:40:03,570 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:40:03,572 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-11 10:40:03,575 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-11 10:40:03,578 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-11 10:40:03,578 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-11 10:40:03,580 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-11 10:40:03,583 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-11 10:40:04,069 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-11 10:40:06,008 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1075   | Passo 1 Saída: {
+    "thought": "O primeiro passo é explorar a estrutura do projeto para entender como ele está organizado.",
+    "action": "list_project_structure",
+    "action_input": ""
+}
+2026-02-11 10:40:06,008 | INFO     | Passo: Round 1 - Analyst    | Tokens: 1075   | Executando ferramenta: list_project_structure com entrada: 
+2026-02-11 10:40:06,253 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1075   | Observação: RAG-MPMG/
+    docker-compose.yml
+    main.py
+    pyproject.toml
+    README.md
+    requirements.txt
+    uv.lock
+    app/
+        __init__.py
+        api/
+            v1.py
+            __init__.py
+     ...
+2026-02-11 10:40:08,834 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12540  | Passo 2 Saída: {
+    "thought": "Agora que tenho a estrutura do projeto, o próximo passo é ler os arquivos de código e documentação mais relevantes para realizar uma análise aprofundada.",
+    "action": "read_project_files",
+    "action_input": ""
+}
+2026-02-11 10:40:08,835 | INFO     | Passo: Round 1 - Analyst    | Tokens: 12540  | Executando ferramenta: read_project_files com entrada: 
+2026-02-11 10:40:08,874 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12540  | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-11 10:40:58,500 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 75417  | Passo 3 Saída: {
+    "thought": "Concluí a leitura dos arquivos principais. Agora, vou estruturar a documentação técnica detalhada com base nas informações coletadas.",
+    "final_answer": {
+        "Visao_Geral_Detalhada": {
+            "Contexto": "O projeto RAG-MPMG foi desenvolvido para processamento de documentos e busca vetorial, focando principalmente em normas internas do Ministério Público de Minas Gerais (MPMG). O sistema utiliza uma arquitetura de API REST implementada com FastAPI e suporta OCR (Reconhecimento Óptico de Caracteres) para extração de informações de documentos em formato PDF e DOCX, além de oferecer suporte à criação e gerenciamento de respostas automáticas.",
+            "Propósito": "O objetivo principal é transformar normas internas em conhecimento consultável através de um pipeline de recuperação de respostas (RAG), que combina técnicas de processamento de linguagem natural e busca vetorial otimizada.",
+            "Regras_de_Negócio": "O sistema permite a integração com diversos serviços incluindo bases de dados, serviços de IA (como OpenAI e Google Gemini), e está preparado para operar em um ambiente distribuído com Ray, oferecendo processamento escalável e eficiente."
+        },
+        "Tecnologias_e_Versoes": {
+            "Requirements": [
+                {
+                    "Nome": "faiss-cpu",
+                    "Versao": ">=1.13.2"
+                },
+                {
+                    "Nome": "neo4j",
+                    "Versao": ">=6.1.0"
+                },
+                {
+                    "Nome": "numpy",
+                    "Versao": ">=2.4.1"
+                },
+                {
+                    "Nome": "python-dotenv",
+                    "Versao": ">=1.2.1"
+                },
+                {
+                    "Nome": "qdrant-client",
+                    "Versao": ">=1.16.2"
+                },
+                {
+                    "Nome": "sentence-transformers",
+                    "Versao": ">=5.2.0"
+                },
+                {
+                    "Nome": "pymupdf",
+                    "Versao": ">=1.25.0"
+                },
+                {
+                    "Nome": "openai",
+                    "Versao": ">=1.10.0"
+                },
+                {
+                    "Nome": "spacy",
+                    "Versao": ">=3.7.0"
+                },
+                {
+                    "Nome": "langdetect",
+                    "Versao": ">=1.0.9"
+                },
+                {
+                    "Nome": "requests",
+                    "Versao": ">=2.31.0"
+                }
+            ]
+        },
+        "Arquitetura_do_Sistema": {
+            "Diagrama": "```mermaid\n  graph TD;\n    A[Frontend] -->|Chamadas API| B[FastAPI];\n    B --> C[Queue Manager];\n    B -->|Estoque de Dados| D[MongoDB];\n    B -->|Integração com IA| E[OpenAI, Google Gemini];\n    B -->|Sistema de Add-ons| F[Qdrant];\n    C -->|Gerenciamento| G[Redis];\n    D -->|Conexões| H[Neo4j];\n    F -->|Armazenamento e Recuperação| I[Vector Store];\n    A --> J[User Interface];\n```",
+            "Explanacao": {
+                "Frontend": "A interface do usuário que realiza chamadas à API.",
+                "FastAPI": "A camada de processamento e gerenciamento de requisições API.",
+                "Queue Manager": "Gerencia o enfileiramento e a execução de tarefas assíncronas.",
+                "MongoDB": "Banco de dados principal para armazenamento de documentos e informações.",
+                "OpenAI e Google Gemini": "Serviços de IA para geração de respostas e processamento de linguagem natural.",
+                "Qdrant": "Sistema de armazenamento e recuperação que utiliza busca vetorial.",
+                "Redis": "Banco de dados em memória usado para armazenar estados de processamentos em fila.",
+                "Neo4j": "Banco de dados orientado a grafos para interações complexas entre dados.",
+                "Vector Store": "Gerencia a indexação e recuperação de informações vetorizadas."
+            }
+        },
+        "ANALISE_DE_CODIGO": {
+            "main.py": {
+                "Propósito": "Arquivo principal que inicia a aplicação FastAPI e carrega as variáveis de ambiente.",
+                "Classes_Principais": [],
+                "Métodos_Principais": [
+                    {
+                        "Nome": "__init__",
+                        "Entradas": [],
+                        "Saídas": [],
+                        "Lógica": "Carrega as variáveis de ambiente e inicializa a configuração do aplicativo."
+                    }
+                ],
+                "Variáveis_Constantes": []
+            },
+            "app/api/v1.py": {
+                "Propósito": "Define rotas e lógicas da versão 1 da API.",
+                "Classes_Principais": ["APIRouter"],
+                "Métodos_Principais": [
+                    {
+                        "Nome": "root",
+                        "Entradas": [],
+                        "Saídas": ["StandardResponse"],
+                        "Lógica": "Retorna uma mensagem padrão ao acessar a raiz da API."
+                    },
+                    {
+                        "Nome": "gerar_minuta_endpoint",
+                        "Entradas": [
+                            {
+                                "Nome": "id",
+                                "Tipo": "str",
+                                "Descrição": "ID único do modelo a ser gerado."
+                            }
+                        ],
+                        "Saídas": ["StandardResponse"],
+                        "Lógica": "Enfileira uma tarefa para gerar uma minuta baseada no ID fornecido."
+                    }
+                ],
+                "Variáveis_Constantes": []
+            },
+            "app/core/config.py": {
+                "Propósito": "Gerar e armazenar configurações do aplicativo.",
+                "Classes_Principais": ["Config"],
+                "Métodos_Principais": [
+                    {
+                        "Nome": "__init__",
+                        "Entradas": [],
+                        "Saídas": [],
+                        "Lógica": "Carrega variáveis de configuração usando variáveis de ambiente."
+                    },
+                    {
+                        "Nome": "get_ray_runtime_env",
+                        "Entradas": [],
+                        "Saídas": ["RuntimeEnv"],
+                        "Lógica": "Retorna a configuração de ambiente para o Ray, lendo requirements."
+                    }
+                ],
+                "Variáveis_Constantes": []
+            },
+            "app/core/logger.py": {
+                "Propósito": "Gerenciar logs da aplicação.",
+                "Classes_Principais": ["Logger"],
+                "Métodos_Principais": [
+                    {
+                        "Nome": "__init__",
+                        "Entradas": [
+                            {
+                                "Nome": "name",
+                                "Tipo": "str",
+                                "Descrição": "Nome do logger."
+                            },
+                            {
+                                "Nome": "log_file_name",
+                                "Tipo": "str",
+                                "Descrição": "Nome do arquivo de log."
+                            }
+                        ],
+                        "Saídas": [],
+                        "Lógica": "Configura o logger e o arquivo onde os logs serão armazenados."
+                    },
+                    {
+                        "Nome": "debug",
+                        "Entradas": ["message: str"],
+                        "Saídas": [],
+                        "Lógica": "Loga mensagens de nível DEBUG."
+                    }
+                ],
+                "Variáveis_Constantes": []
+            },
+            "app/core/queue.py": {
+                "Propósito": "Gerenciar filas de tarefas utilizando Redis.",
+                "Classes_Principais": ["QueueManager"],
+                "Métodos_Principais": [
+                    {
+                        "Nome": "__init__",
+                        "Entradas": [],
+                        "Saídas": [],
+                        "Lógica": "Inicializa o gerenciador de filas conectando ao Redis."
+                    },
+                    {
+                        "Nome": "enqueue_task",
+                        "Entradas": [
+                            {
+                                "Nome": "data",
+                                "Tipo": "Dict[str, Any]",
+                                "Descrição": "Dados da tarefa a enfileirar."
+                            },
+                            {
+                                "Nome": "queue",
+                                "Tipo": "str",
+                                "Descrição": "Nome da fila a ser utilizada."
+                            }
+                        ],
+                        "Saídas": ["str"],
+                        "Lógica": "Adiciona uma nova tarefa à fila especificada."
+                    }
+                ],
+                "Variáveis_Constantes": []
+            }
+        },
+        "Fluxos_de_Dados_Completo": {
+            "1": {
+                "Entrada": "Usuário envia um arquivo PDF ou DOC.",
+                "Processamento": "O arquivo é enviado para a API, processado pelo OCR.",
+                "Banco_de_Dados": "Os dados extraídos são salvos no MongoDB."
+            },
+            "2": {
+                "Entrada": "User kube-batch CRUD com o estado da fila no Redis.",
+                "Processamento": "Processamento do job pela API que atualiza o status da fila.",
+                "Banco_de_Dados": "Status do job atualizado em Redis com logs."
+            },
+            "3": {
+                "Entrada": "Resposta é gerada com OpenAI ou Google Gemini.",
+                "Processamento": "Resultado é enviado ao usuário.",
+                "Banco_de_Dados": "Detalhes do resultado são salvos no MongoDB."
+            }
+        }
+    }
+}
+2026-02-11 10:40:58,501 | INFO     | Passo: Round 1 - Analyst    | Tokens: 75417  | Agente alcançou a resposta final.
+2026-02-11 10:40:58,506 | INFO     | Passo: Round 1 - Analyst    | Tokens: 62877  | Analista finalizou em 3 passos. Tokens estimados bloco: 62877
+2026-02-11 10:45:38,183 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 10:45:38,214 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-11 10:45:38,256 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-11 10:45:38,273 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-11 10:45:38,299 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-11 10:45:38,329 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-11 10:45:38,861 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-11 10:45:40,132 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1078   | Passo 1 Saída: {
+    "thought": "Meu primeiro passo será explorar a estrutura do projeto para entender sua organização e quais arquivos estão presentes.",
+    "action": "list_project_structure",
+    "action_input": ""
+}
+2026-02-11 10:45:40,132 | INFO     | Passo: Round 1 - Analyst    | Tokens: 1078   | Executando ferramenta: list_project_structure com entrada: 
+2026-02-11 10:45:40,273 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1078   | Observação: RAG-MPMG/
+    docker-compose.yml
+    main.py
+    pyproject.toml
+    README.md
+    requirements.txt
+    uv.lock
+    app/
+        __init__.py
+        api/
+            v1.py
+            __init__.py
+     ...
+2026-02-11 10:45:42,750 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12566  | Passo 2 Saída: {
+    "thought": "Agora que eu conheço a estrutura do projeto, meu próximo passo é ler os arquivos principais para documentar sua funcionalidade detalhadamente. Começando pelo arquivo 'main.py' que geralmente contém a entrada principal do programa.",
+    "action": "read_specific_file",
+    "action_input": "main.py"
+}
+2026-02-11 10:45:42,751 | INFO     | Passo: Round 1 - Analyst    | Tokens: 12566  | Executando ferramenta: read_specific_file com entrada: main.py
+2026-02-11 10:45:42,753 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12566  | Observação: --- File: C:\Projetos Estudos\RAG\RAG-MPMG\main.py ---
+from dotenv import load_dotenv
+import ray
+import fastapi
+from app.api.v1 import router as v1_router
+from app.core.config import Config
+
+# Carrega...
+2026-02-11 10:45:51,005 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 24613  | Passo 3 Saída: {
+    "thought": "Analisei o arquivo 'main.py', que é o ponto de entrada do aplicativo. Agora vou documentar seu propósito, as dependências que utiliza e a configuração geral.",
+    "final_answer": {
+        "arquivo": "main.py",
+        "propósito": "Este arquivo serve como o ponto de entrada da aplicação FastAPI que fornece uma API para processamento de Inteligência Artificial, utilizando variáveis de ambiente e configuração.",
+        "dependências": [
+            {
+                "nome": "dotenv",
+                "versão": "não especificada",
+                "uso": "Carregar variáveis de ambiente de um arquivo .env."
+            },
+            {
+                "nome": "ray",
+                "versão": "não especificada",
+                "uso": "Possivelmente utilizado para paralelismo e computação distribuída (não utilizado diretamente neste arquivo)."
+            },
+            {
+                "nome": "fastapi",
+                "versão": "não especificada",
+                "uso": "Framework web para construção da API."
+            }
+        ],
+        "configurações": {
+            "app": {
+                "title": "MP-IA",
+                "version": "config.app_version", 
+                "description": "API - para processamento de Inteligência Artificial",
+                "openapi_url": "/openapi.json",
+                "docs_url": "/docs",
+                "redoc_url": "/redoc"
+            }
+        },
+        "fluxo": [
+            "O arquivo carrega as variáveis de ambiente usando `load_dotenv()`.",
+            "Cria uma instância de `Config` que provavelmente contém configurações do aplicativo.",
+            "Inicializa a aplicação FastAPI com as configurações especificadas.",
+            "Inclui o roteador da API, que é gerenciado em um arquivo separado na estrutura `app/api/v1.py`."
+        ]
+    }
+}
+2026-02-11 10:45:51,006 | INFO     | Passo: Round 1 - Analyst    | Tokens: 24613  | Agente alcançou a resposta final.
+2026-02-11 10:45:51,006 | INFO     | Passo: Round 1 - Analyst    | Tokens: 12047  | Analista finalizou em 3 passos. Tokens estimados bloco: 12047
+2026-02-11 11:15:40,626 | INFO     | Passo: Initialization       | Tokens: 0      | Iniciando análise em: C:\Projetos Estudos\RAG\RAG-MPMG
+2026-02-11 11:15:40,628 | INFO     | Passo: Initialization       | Tokens: 0      | Configurado OpenRouter como provedor LLM para PraisonAI.
+2026-02-11 11:15:40,630 | INFO     | Passo: Initialization       | Tokens: 0      | Adapter PraisonCritic inicializado.
+2026-02-11 11:15:40,630 | INFO     | Passo: Initialization       | Tokens: 0      | ReviewPipeline (Hexagonal) Inicializada.
+2026-02-11 11:15:40,633 | INFO     | Passo: Initialization       | Tokens: 0      | Pipeline de Revisão (Hexagonal) inicializada.
+2026-02-11 11:15:40,633 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Analista está lendo arquivos e gerando documentação...
+2026-02-11 11:15:40,637 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 0      | Loaded API Key: sk-or-v1-9...
+2026-02-11 11:15:41,182 | INFO     | Passo: Round 1 - Analyst    | Tokens: 0      | Iniciando Agente ReAct para objetivo: 
+    Você é um Arquiteto de Software Sênior especi...
+2026-02-11 11:15:43,393 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1079   | Passo 1 Saída: {
+    "thought": "Preciso explorar a estrutura do projeto para entender sua organização e identificar os arquivos a serem lidos.",
+    "action": "list_project_structure",
+    "action_input": ""
+}
+2026-02-11 11:15:43,393 | INFO     | Passo: Round 1 - Analyst    | Tokens: 1079   | Executando ferramenta: list_project_structure com entrada: 
+2026-02-11 11:15:43,632 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 1079   | Observação: RAG-MPMG/
+    docker-compose.yml
+    main.py
+    pyproject.toml
+    README.md
+    requirements.txt
+    uv.lock
+    app/
+        __init__.py
+        api/
+            v1.py
+            __init__.py
+     ...
+2026-02-11 11:15:54,275 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12561  | Passo 2 Saída: {
+    "thought": "Agora que explorei a estrutura do projeto, irei começar a ler os arquivos relevantes, começando pelo 'main.py' e pelo 'README.md' para entender o propósito do projeto e sua configuração.",
+    "action": "read_project_files",
+    "action_input": ""
+}
+2026-02-11 11:15:54,276 | INFO     | Passo: Round 1 - Analyst    | Tokens: 12561  | Executando ferramenta: read_project_files com entrada: 
+2026-02-11 11:15:54,324 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 12561  | Observação: --- Arquivo: .gitignore ---
+# Environments
+.env
+/venv
+.python-version
+
+# IDEs
+.vscode
+
+# Temp
+temp/
+
+# Logs
+logs/
+
+# Geral
+.DS_Store
+to_delete/
+Base de Dados/
+__pycache__/
+
+# Data Directories (Ignored...
+2026-02-11 11:16:44,572 | DEBUG    | Passo: Round 1 - Analyst    | Tokens: 75029  | Passo 3 Saída: {
+    "thought": "Concluí a leitura principal dos arquivos do projeto, incluindo o README, o arquivo de configuração, alguns arquivos API e serviços. Agora, é hora de organizar todos esses detalhes em uma documentação técnica detalhada, abrangendo a visão geral, tecnologias utilizadas, arquitetura do sistema e uma análise minuciosa do código.",
+    "final_answer": "## Visão Geral Detalhada\n**Contexto**: O projeto RAG-MPMG é um pipeline de Recuperação Aumentada de Geração (RAG) para normas internas do Ministério Público de Minas Gerais (MPMG). Seu propósito é processar documentos como PDFs e DOCXs, realizar OCR, extração de metadados e permitir a busca e recuperação de informações a partir desses documentos.\n\n**Regras de Negócio**: O sistema permite operações de OCR em documentos, a normalização dos dados extraídos, a vetorização e a indexação, utilizando FAISS para buscas eficientes. Além disso, a solução integra um sistema de gerenciamento de filas via Redis para processar as tarefas de forma assíncrona.\n\n## Tecnologias e Versões\n- **FastAPI**: 0.115.14\n- **Ray**: 2.47.1\n- **PyMuPDF**: 1.26.1\n- **Surya OCR**: 0.14.6\n- **FAISS**: 1.13.2\n- **MongoDB**: 6.1.0+\n- **Azure OpenAI Client**: 1.93.0\n- **Redis**: 6.4.0\n\n## Arquitetura do Sistema\nA arquitetura do sistema é composta pelas seguintes camadas: \n\n```mermaid\n  graph TD;\n      A[Frontend] -->|REST API| B[Backend]\n      B --> C[Serviço de OCR]\n      B --> D[Gerente de Filas]\n      D --> E[Banco de Dados MongoDB]\n      D --> F[Dados na Nuvem]\n      F --> G[Serviços de IA]\n      G --> H[Google Gemini]\n      G --> I[Azure OpenAI]\n```\n\n**Camada de Frontend**: A interação com o usuário é feita através de endpoints REST, onde as requisições são manipuladas pelo FastAPI. \n\n**Camada de Backend**: O backbone do sistema que processa as requisições, inclui serviços voltados para OCR e gerenciamento de filas.\n\n**Serviço de OCR**: Implementa o processamento de OCR com suporte a múltiplos formatos e faz uso do Surya para reconhecimento de texto.\n\n**Gerente de Filas**: Implementa um sistema de gerenciamento de filas utilizando o Redis, que publica tarefas para processamento assíncrono.\n\n**Banco de Dados MongoDB**: Utilizado para armazenar as informações extraídas e processadas dos documentos, além de manter o histórico das tarefas executadas.\n\n**Dados na Nuvem e Serviços de IA**: Integrações com serviços de AI para geração e análise de textos.\n\n## ANÁLISE DE CÓDIGO\n### main.py\n**Propósito**: Ponto de entrada do aplicativo FastAPI.\n\n**Classes principais**: \n- `FastAPI`: Instância principal do aplicativo.\n\n**Métodos principais**:\n- `load_dotenv()`: Carrega variáveis de ambiente do arquivo .env para configuração da aplicação.\n- `include_router(v1_router)`: Integra as rotas da API na aplicação.\n\n---\n\n### app/api/v1.py\n**Propósito**: Define as rotas de versão 1 da API.\n\n**Classes principais**:\n- `APIRouter`: Para gerenciar as rotas.\n- `StandardResponse`: Classe do modelo de resposta padrão.\n\n**Métodos principais**:\n- `root()`: Endpoint principal que retorna uma mensagem de sucesso.\n- `gerar_minuta_endpoint(id)`: Gera um modelo a partir do ID fornecido.\n  - **Entradas**: id (str) - ID do modelo a ser gerado.\n  - **Saídas**: JSON com o job_id.\n\n---\n\n### app/core/config.py\n**Propósito**: Configuração central para o aplicativo, laborando variáveis ambientais e definindo configurações necessárias para a operação. \n\n**Métodos principais**:\n- `__init__`: Carrega as variáveis a partir do ambiente e as inicializa.\n- `get_ray_runtime_env()`: Cria um ambiente de execução para Ray, através de dependências do requirements.txt.\n  - **Saídas**: Objeto `RuntimeEnv` necessário para inicializar tarefas em Ray.\n\n---\n\n### app/core/queue.py\n**Propósito**: Gerenciamento das filas utilizando Redis.\n\n**Classes principais**:\n- `QueueManager`: Gerencia as interações com Redis relacionadas a filas.\n\n**Métodos principais**:\n- `enqueue_task(data, queue)`: Adiciona uma tarefa à fila com o ID único gerado, e salva o status como \"pending\".\n  - **Entradas**: data (dict) - Dados da tarefa, queue (str) - Nome da fila.\n  - **Saídas**: ID da tarefa.\n- `get_job_status(job_id)`: Retorna o status de um job específico.\n  - **Entradas**: job_id (str) - ID do job.\n  - **Saídas**: Status do job ou None.\n\n---\n\n### app/services/gpt_service.py\n**Propósito**: Contém a lógica de geração e análise de respostas usando serviços GPT.\n\n**Métodos principais**:\n- `gerar_resposta_gpt(data_geracao_gpt)`: Gera uma resposta a partir de dados de entrada que corresponde a um documento \"inteligência\".\n  - **Entradas**: data_geracao_gpt (DataGeracaoGptDTO) - Dados necessários para gerar resposta.\n  - **Saídas**: Dicionário com o identificador do documento gerado.\n\n## Fluxos de Dados Completo\nO fluxo de dados típico começa quando um usuário faz uma requisição à API, que passa pela seguinte sequência:\n1. A requisição é recebida e processada pelo FastAPI em `main.py`.\n2. O router v1 em `app/api/v1.py` mapeia a chamada para o método apropriado.\n3. As operações de OCR são geridas através do serviço em `ocr_service.py`, onde o documento é processado e convertido em texto.\n4. Os dados são armazenados no MongoDB através do repositório definido em `repositories/inteligencia_repository.py`.\n5. O status das tarefas é gerido via Redis, permitindo seguimiento e atualização do status da requisição.\n\nEssa descrição fornece um panorama do funcionamento da aplicação e suas componentes principais, permitindo uma boa compreensão da funcionalidade e estrutura do sistema."
+}
+2026-02-11 11:16:44,577 | INFO     | Passo: Round 1 - Analyst    | Tokens: 75029  | Agente alcançou a resposta final.
+2026-02-11 11:16:44,597 | INFO     | Passo: Round 1 - Analyst    | Tokens: 62468  | Analista finalizou em 3 passos. Tokens estimados bloco: 62468
+2026-02-11 11:16:44,606 | INFO     | Passo: Round 1 - Critic     | Tokens: 62468  | Iniciando Caso de Uso: Verificar Documentação...
+2026-02-11 11:16:44,614 | INFO     | Passo: Round 1 - Critic     | Tokens: 62468  | Adapter: Iniciando revisão hierárquica via PraisonAI...
+2026-02-11 11:17:17,986 | INFO     | Passo: Round 1 - Critic     | Tokens: 62468  | Caso de Uso Finalizado. Aprovado: True, Nota: 8.6
+2026-02-11 11:17:17,988 | INFO     | Passo: Round 1 - Critic     | Tokens: 62468  | Crítico finalizou. Tokens estimados bloco: 0
+2026-02-11 11:17:17,997 | INFO     | Passo: Round 1 - Critic     | Tokens: 62468  | Documentação salva em: generated_docs/RAG-MPMG_20260211_111717.md
+2026-02-19 09:52:26,097 | INFO     | Passo: Inicialização        | Tokens: 0      | CriticAgent Hierárquico (PraisonAI) inicializado.
+2026-02-19 09:52:26,098 | INFO     | Passo: Inicialização        | Tokens: 0      | === Iniciando Workflow Agêntico para: C:\Projetos Estudos\Agentes IA\agentic-code-verification\src\agents ===
+2026-02-19 09:52:26,098 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Scanner Node: Mapeando estrutura do projeto ---
+2026-02-19 09:52:26,099 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Planner Node: Decidindo arquivos para leitura ---
+2026-02-19 09:55:30,870 | INFO     | Passo: Inicialização        | Tokens: 0      | CriticAgent Hierárquico (PraisonAI) inicializado.
+2026-02-19 09:55:30,872 | INFO     | Passo: Inicialização        | Tokens: 0      | === Iniciando Workflow Agêntico para: C:\Projetos Estudos\Agentes IA\agentic-code-verification\src\agents ===
+2026-02-19 09:55:30,874 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Scanner Node: Mapeando estrutura do projeto ---
+2026-02-19 09:55:30,876 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Planner Node: Decidindo arquivos para leitura ---
+2026-02-19 09:55:36,918 | INFO     | Passo: Inicialização        | Tokens: 0      | Arquivos selecionados pelo Planner: ['agents/__init__.py', 'agents/critic.py', 'agents/react_core.py', 'agents/recursive_agent.py', 'agents/specialized/planner.py', 'agents/specialized/reader.py', 'agents/specialized/scanner.py', 'agents/specialized/writer.py']
+2026-02-19 09:55:36,919 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Reader Node: Lendo arquivos selecionados ---
+2026-02-19 09:55:36,927 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido: agents/__init__.py
+2026-02-19 09:55:36,930 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido: agents/critic.py
+2026-02-19 09:55:36,932 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido: agents/react_core.py
+2026-02-19 09:55:36,933 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido: agents/recursive_agent.py
+2026-02-19 09:55:36,947 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido: agents/specialized/planner.py
+2026-02-19 09:55:36,949 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido: agents/specialized/reader.py
+2026-02-19 09:55:36,951 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido: agents/specialized/scanner.py
+2026-02-19 09:55:36,958 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido: agents/specialized/writer.py
+2026-02-19 09:55:36,960 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Iteração 1/1 ---
+2026-02-19 09:55:36,962 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Writer Node: Gerando resposta final ---
+2026-02-19 09:55:45,233 | INFO     | Passo: Inicialização        | Tokens: 0      | Iniciando revisão hierárquica...
+2026-02-19 09:55:45,236 | INFO     | Passo: Inicialização        | Tokens: 0      | Documentação dividida em 1 seções para análise.
+2026-02-19 09:55:56,700 | DEBUG    | Passo: Inicialização        | Tokens: 0      | PraisonAI raw result: {'task_status': {0: 'in progress', 1: 'in progress'}, 'task_results': {0: None, 1: None}}
+2026-02-19 09:55:56,701 | ERROR    | Passo: Inicialização        | Tokens: 0      | Erro na execução hierárquica: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+2026-02-19 09:55:56,701 | INFO     | Passo: Inicialização        | Tokens: 0      | >>> Documentação REPROVADA. Score: 0 <<<
+2026-02-19 09:55:56,702 | WARNING  | Passo: Inicialização        | Tokens: 0      | Número máximo de iterações atingido.
