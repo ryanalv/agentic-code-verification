@@ -8268,3 +8268,58 @@ __pycache__/
 2026-02-26 13:55:44,654 | WARNING  | Passo: Inicialização        | Tokens: 0      | Rascunho inválido, parando.
 2026-02-26 13:55:44,655 | WARNING  | Passo: Inicialização        | Tokens: 0      | Número máximo de iterações atingido.
 2026-02-26 13:55:44,658 | INFO     | Passo: Inicialização        | Tokens: 0      | CLI Finalizada com Sucesso. Salvo em: C:\Projetos Estudos\Agentes IA\agentic-code-verification\generated_docs\transcricao_longa-v20_20260226_135544.md
+2026-02-26 14:23:48,477 | INFO     | Passo: Inicialização        | Tokens: 0      | CLI Iniciada. Projeto: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0 | Dominio: None
+2026-02-26 14:23:48,480 | INFO     | Passo: Inicialização        | Tokens: 0      | Iniciando análise de 'transcricao_longa-v2.0'. Arquivos: 44. Estratégia: RLM (Recursivo)
+2026-02-26 14:23:49,700 | INFO     | Passo: Inicialização        | Tokens: 0      | Análise Agêntica (Graph) iniciada para: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0
+2026-02-26 14:23:49,701 | INFO     | Passo: Inicialização        | Tokens: 0      | CriticAgent Hierárquico (PraisonAI) inicializado.
+2026-02-26 14:23:49,701 | INFO     | Passo: Inicialização        | Tokens: 0      | === Iniciando Workflow Agêntico para: C:\Projetos Estudos\Transicrição\transcricao_longa-v2.0 ===
+2026-02-26 14:23:49,702 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Scanner Node: Mapeando estrutura do projeto ---
+2026-02-26 14:23:49,702 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Planner Node: Decidindo arquivos para leitura ---
+2026-02-26 14:23:52,862 | INFO     | Passo: Inicialização        | Tokens: 0      | Arquivos selecionados pelo Planner: ['main.py', 'src/factory.py', 'src/__init__.py', 'src/aplicacao/interfaces.py', 'src/aplicacao/limpeza.py', 'src/aplicacao/orquestrador.py', 'src/aplicacao/__init__.py', 'src/dominio/entidades.py', 'src/dominio/servicos.py', 'src/dominio/__init__.py', 'src/filas/broker.py', 'src/filas/externa.py', 'src/filas/__init__.py', 'src/infraestrutura/config.py', 'src/infraestrutura/ffmpeg.py', 'src/infraestrutura/filesystem.py', 'src/infraestrutura/gcs.py', 'src/infraestrutura/gemini.py', 'src/infraestrutura/job_store.py', 'src/infraestrutura/logging.py', 'src/infraestrutura/stt_chirp3.py', 'src/infraestrutura/__init__.py', 'src/prompts/revisao_diarizacao.py', 'src/prompts/revisao_final.py', 'src/prompts/sumarizacao.py', 'src/prompts/verificacao_qualidade.py', 'src/prompts/__init__.py', 'src/workers/chunking.py', 'src/workers/entrada.py', 'src/workers/limpeza.py', 'src/workers/revisao_diarizacao.py', 'src/workers/revisao_final.py', 'src/workers/salvamento.py', 'src/workers/stt.py', 'src/workers/sumarizacao.py', 'src/workers/__init__.py']
+2026-02-26 14:23:52,863 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Reader Node: Processando RAG e leitura de arquivos ---
+2026-02-26 14:23:52,864 | ERROR    | Passo: Inicialização        | Tokens: 0      | Erro ao processar RAG: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+2026-02-26 14:23:52,866 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: main.py
+2026-02-26 14:23:52,867 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/factory.py
+2026-02-26 14:23:52,877 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/__init__.py
+2026-02-26 14:23:52,878 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/aplicacao/interfaces.py
+2026-02-26 14:23:52,880 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/aplicacao/limpeza.py
+2026-02-26 14:23:52,881 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/aplicacao/orquestrador.py
+2026-02-26 14:23:52,890 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/aplicacao/__init__.py
+2026-02-26 14:23:52,891 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/dominio/entidades.py
+2026-02-26 14:23:52,893 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/dominio/servicos.py
+2026-02-26 14:23:52,901 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/dominio/__init__.py
+2026-02-26 14:23:52,904 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/filas/broker.py
+2026-02-26 14:23:52,905 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/filas/externa.py
+2026-02-26 14:23:52,914 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/filas/__init__.py
+2026-02-26 14:23:52,916 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/config.py
+2026-02-26 14:23:52,917 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/ffmpeg.py
+2026-02-26 14:23:52,918 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/filesystem.py
+2026-02-26 14:23:52,918 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/gcs.py
+2026-02-26 14:23:52,920 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/gemini.py
+2026-02-26 14:23:52,921 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/job_store.py
+2026-02-26 14:23:52,922 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/logging.py
+2026-02-26 14:23:52,922 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/stt_chirp3.py
+2026-02-26 14:23:52,933 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/infraestrutura/__init__.py
+2026-02-26 14:23:52,934 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/prompts/revisao_diarizacao.py
+2026-02-26 14:23:52,936 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/prompts/revisao_final.py
+2026-02-26 14:23:52,938 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/prompts/sumarizacao.py
+2026-02-26 14:23:52,938 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/prompts/verificacao_qualidade.py
+2026-02-26 14:23:52,947 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/prompts/__init__.py
+2026-02-26 14:23:52,949 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/chunking.py
+2026-02-26 14:23:52,950 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/entrada.py
+2026-02-26 14:23:52,950 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/limpeza.py
+2026-02-26 14:23:52,951 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/revisao_diarizacao.py
+2026-02-26 14:23:52,952 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/revisao_final.py
+2026-02-26 14:23:52,953 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/salvamento.py
+2026-02-26 14:23:52,954 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/stt.py
+2026-02-26 14:23:52,956 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/sumarizacao.py
+2026-02-26 14:23:52,967 | INFO     | Passo: Inicialização        | Tokens: 0      | Lido integralmente: src/workers/__init__.py
+2026-02-26 14:23:52,967 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Iteração 1/3 ---
+2026-02-26 14:23:52,968 | INFO     | Passo: Inicialização        | Tokens: 0      | --- Writer Node: Iniciando Fase Map-Reduce (Múltiplos Agentes) ---
+2026-02-26 14:23:53,171 | INFO     | Passo: Inicialização        | Tokens: 0      | Writer: Contexto particionado em 1 trechos para sub-agentes.
+2026-02-26 14:24:55,681 | INFO     | Passo: Inicialização        | Tokens: 0      | Writer: Sub-agente concluiu uma análise.
+2026-02-26 14:24:55,682 | INFO     | Passo: Inicialização        | Tokens: 0      | Writer: Iniciando Agente Editor Mestre para compilação final.
+2026-02-26 14:25:17,580 | INFO     | Passo: Inicialização        | Tokens: 0      | Writer Node: Draft finalizado com sucesso.
+2026-02-26 14:25:17,581 | WARNING  | Passo: Inicialização        | Tokens: 0      | Rascunho inválido, parando.
+2026-02-26 14:25:17,582 | WARNING  | Passo: Inicialização        | Tokens: 0      | Número máximo de iterações atingido.
+2026-02-26 14:25:17,585 | INFO     | Passo: Inicialização        | Tokens: 0      | CLI Finalizada com Sucesso. Salvo em: C:\Projetos Estudos\Agentes IA\agentic-code-verification\generated_docs\transcricao_longa-v20_20260226_142517.md
