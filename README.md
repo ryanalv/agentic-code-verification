@@ -1,119 +1,139 @@
-# 🤖 Agente Crítico de Qualidade de IA
+<div align="center">
+  <img src="https://img.shields.io/badge/Status-Ativo-brightgreen" alt="Status" />
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue" alt="Python Version" />
+  <img src="https://img.shields.io/badge/AI-Agentic%20Workflow-purple" alt="Architecture" />
+  <img src="https://img.shields.io/badge/LLM-Azure%20OpenAI-blue" alt="Provider" />
+</div>
 
-Bem-vindo ao projeto **AI Quality Critic Agent**. Este é um sistema inteligente projetado para garantir que o código e a documentação gerados por Inteligência Artificial sejam precisos, úteis e livres de erros.
+<br>
+
+<div align="center">
+  <h1>🤖 Agentic Code Verification</h1>
+  <p><b>Uma plataforma geradora de documentação técnica inteligente baseada em Arquitetura de Múltiplos Agentes Autônomos (Multi-Agent RAG System).</b></p>
+</div>
 
 ---
 
-## 📖 O que é este projeto?
+## 📖 O que é este projeto? (Para todos os públicos)
 
-Imagine que você tem um estagiário júnior (vamos chamá-lo de **Code Analyst**) que escreve documentações de software. Ele é rápido, mas às vezes inventa coisas (alucinações) ou esquece detalhes importantes.
+### A Analogia Simples (Para iniciantes e estudantes 🎓)
+Imagine que entender um código gigante escrito por outra pessoa é como tentar ler um livro em chinês sem dicionário. 
 
-Este projeto cria um **Supervisor Sênior** (o **Critic Agent**) para revisar o trabalho desse estagiário.
-1. O **Analista** faz o trabalho.
-2. O **Crítico** revisa, dá uma nota e aponta erros (como arquivos que não existem).
-3. Se o trabalho for ruim, o Crítico devolve para o Analista corrigir.
-4. Isso se repete até o trabalho ficar excelente.
+Este projeto constrói um **time de especialistas virtuais (Agentes de Inteligência Artificial)** liderados por um Gerente Exigente. O time funciona assim:
+1. O **Explorador:** Entra na pasta do seu código e mapeia todos os arquivos que existem.
+2. O **Planejador:** Olha os arquivos e decide: *"Ok, para entender esse sistema, precisamos ler o arquivo A e B primeiro."*
+3. O **Leitor:** Lê as regras de negócio da empresa e o código-fonte em si.
+4. O **Escritor:** Escreve uma documentação gigante, com diagramas de texto, explicando passo a passo o que o código faz.
+5. O **Crítico (O Chefe chato):** Pega a documentação do Escritor e diz: *"Nota 6. Você esqueceu de explicar como os erros são tratados na linha 42 e seus diagramas estão ruins. Refaça!"*
+
+O Escritor só pode entregar o projeto para você quando o Crítico aprovar. No final, você recebe um documento em Markdown perfeito explicando o seu sistema!
+
+### A Visão Técnica (Para Engenheiros e Seniores 💻)
+O **Agentic Code Verification** é um pipeline *ReAct (Reasoning and Acting)* orquestrado via Grafos de Estado (State Graph). Ao invés de usar um único LLM com um prompt gigante, o sistema delega responsabilidades para agentes especializados.
+
+- **Arquitetura Base:** LangGraph/StateGraph para roteamento condicional inteligente.
+- **Domínio/Contexto:** Suporte a **RAG (Retrieval-Augmented Generation)** utilizando o ChromaDB. Permite injetar arquivos de arquitetura (Domain Knowledge) fora do código-fonte para que a IA documente o projeto respeitando as premissas da empresa.
+- **PraisonAI Adapter:** Utiliza hierarquia de agentes (Worker/Manager) no nó de Crítica para avaliar a profundidade técnica, penalizando abstrações excessivas e detectando alucinações de arquivos (arquivos inventados na explicação).
+- **LLM Integrado:** Configurado nativamente para utilizar a infraestrutura segura da **Azure OpenAI** (modelos da família GPT-4).
 
 ---
 
 ## ✨ Funcionalidades Principais
 
-- **Interface Web Moderna**: Visualize todo o processo em tempo real no seu navegador.
-- **Detecção de Alucinação**: O sistema verifica automaticamente se os arquivos citados pela IA realmente existem no seu projeto.
-- **Avaliação de Qualidade**: Um "Juiz de IA" dá uma nota de 0 a 10 para a clareza e completude do texto.
-- **Auto-Correção**: O sistema tenta corrigir erros automaticamente refazendo a tarefa com base no feedback.
+- 🕵️ **Análise de Contexto Estendida (RAG):** Mistura a leitura do código puro com as regras de negócio escritas em Markdown da sua empresa.
+- 📐 **Geração de Diagramas ASCII Obrigatórios:** A IA desenha o Fluxo de Dados e a Arquitetura em tabelas ASCII no meio da documentação sem depender de ferramentas visuais externas.
+- 🔁 **Workflow Auto-Corretivo (Self-Healing):** Se a documentação ficar superficial (ex: não descrever tratamento de erros), o sistema entra em *loop* e reescreve as seções penalizadas pelo *Critic Agent*.
+- 🎯 **Conformidade de Arquivos:** Previne a "alucinação clássica" de LLMs, verificando diretamente no disco via hooks python se os arquivos referenciados pela IA realmente existem.
 
 ---
 
-## 🚀 Guia de Instalação (Passo a Passo)
-
-Siga estes passos se você nunca rodou um projeto Python antes.
+## 🚀 Guia de Instalação Rápida
 
 ### Pré-requisitos
-- **Python 3.10 ou superior** instalado. (Digite `python --version` no terminal para verificar).
-- **Git** instalado.
+- **Python 3.10 ou superior** (`python --version`)
+- **Git**
+- Uma conta/chave ativa da **Azure OpenAI**.
 
-### 1. Preparar o Ambiente
+### 1. Clonando e Preparando o Ambiente
+Abra o seu terminal (Prompt de Comando ou PowerShell) e execute:
 
-Abra o seu terminal (Prompt de Comando ou PowerShell) e navegue até a pasta do projeto:
 ```bash
-cd "c:\Projetos Estudos\Agentes IA\agentic-code-verification\ai-quality-critic-agent"
-```
+# Clone o repositório
+git clone https://github.com/ryanalv/agentic-code-verification.git
+cd agentic-code-verification
 
-Instale as dependências necessárias (bibliotecas que o projeto usa):
-```bash
+# Crie um ambiente virtual (Recomendado)
+python -m venv .venv
+
+# Ative o ambiente (No Windows)
+.\.venv\Scripts\activate
+
+# Instale todas as bibliotecas necessárias
 pip install -r requirements.txt
 ```
-*Se você receber erros de permissão ou "pip not found", verifique a instalação do seu Python.*
 
-### 2. Configurar a Chave de API
+### 2. Configurando as Credenciais (O Arquivo `.env`)
+O sistema precisa de chaves para conversar com o cérebro da Inteligência Artificial.
+Crie um arquivo chamado `.env` na pasta raiz do projeto e preencha com suas credenciais da Azure:
 
-Este projeto usa Inteligência Artificial (LLMs) via OpenRouter. Você precisa de uma chave de acesso.
-
-1. Encontre o arquivo chamado `.env` na pasta do projeto.
-2. Abra-o com um editor de texto (Bloco de Notas ou VS Code).
-3. Procure por `OPENROUTER_API_KEY`.
-4. Coloque sua chave logo após o igual, sem aspas. Exemplo:
-   ```properties
-   OPENROUTER_API_KEY=sk-or-v1-seu-token-aqui
-   ```
-5. Salve o arquivo.
-
-**Nota:** Se você não tiver uma chave, o sistema rodará em **Modo de Simulação (Mock)**, gerando dados de teste para você ver a interface funcionando.
+```properties
+AZURE_OPENAI_API_KEY="sua-chave-aqui"
+AZURE_OPENAI_ENDPOINT="https://seu-recurso.openai.azure.com/"
+AZURE_OPENAI_API_VERSION="2024-02-15-preview"
+AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o"  # Ou o nome do seu deployment
+```
 
 ---
 
-## 🖥️ Como Usar
+## 🖥️ Como Usar (Via Linha de Comando - CLI)
 
-### Executando a Interface Web (Recomendado)
+Para rodar a ferramenta, utilizamos o script inteligente `cli.py`. Todo processo agora corre via terminal.
 
-1. No terminal, execute:
-   ```bash
-   python src/server.py
-   ```
-2. Você verá uma mensagem como `Uvicorn running on http://0.0.0.0:8000`.
-3. Abra seu navegador (Chrome, Edge, etc.) e acesse: [http://localhost:8000](http://localhost:8000)
-4. Clique no botão azul **"▶ Iniciar Análise"**.
-5. Acompanhe os logs e a prévia da documentação aparecendo na tela.
+### Opção A: Analisando uma pasta simples
+Você quer gerar a documentação de um app que está no seu disco C:
+```bash
+python cli.py "C:\Projetos\MeuApp"
+```
 
-### Executando Análise de Métricas (Avançado)
+### Opção B: Análise Profunda com RAG (Conhecimento de Domínio)
+Você tem uma pasta com as "Regras do Negócio" ou "Manuais de Arquitetura", e quer que a IA leia isso antes de avaliar o código:
+```bash
+python cli.py "C:\Projetos\MeuApp" --domain "C:\Projetos\RegrasDeNegocio"
+```
 
-Se você quer ver gráficos e dados estatísticos:
-1. Abra a pasta `notebooks` no VS Code.
-2. Abra o arquivo `metrics_analysis.ipynb`.
-3. Clique no botão "Run All" ou execute as células uma por uma.
+### Opção C: Auto-Análise (Self-Analysis)
+Para testar a inteligência do sistema, você pode pedir para ele documentar e explicar o *próprio código fonte* dele mesmo:
+```bash
+python cli.py .
+```
 
----
+### 📂 Onde fica o resultado?
+Sente, pegue um café ☕ (isso pode demorar de 2 a 5 minutos dependendo de quantas vezes o Agente Crítico mandar o Agente Escritor refazer o trabalho).
 
-## 📂 Estrutura do Projeto
+Quando finalizar, acesse a pasta gerada automaticamente:
+`agentic-code-verification/generated_docs/`
 
-Para você se localizar:
-
-- **`src/`**: Onde fica todo o código fonte.
-  - **`agents/`**: O cérebro da IA.
-    - `critic.py`: O agente supervisor (Critico).
-    - `react_core.py`: O motor que faz a IA "pensar" e usar ferramentas.
-    - `code_analyst.py`: O agente operário (Analista).
-  - **`web/`**: Arquivos da interface visual (HTML).
-  - `server.py`: O servidor que conecta a interface ao código Python.
-  - **`utils/`**: Utilitários e helpers.
-    - `logger.py`: Sistema de logs avançado com contexto (passos e tokens).
-- **`docs/`**: Documentação técnica detalhada.
-- **`notebooks/`**: Experimentos e análises de dados.
-- **`tests/`**: Scripts para testar se tudo está funcionando.
+Lá dentro haverá um arquivo Markdown lindamente formatado (ex: `MeuApp_20260226_105000.md`) com a documentação exaustiva do projeto!
 
 ---
 
-## ❓ Resolução de Problemas Comuns
+## 🧠 Arquitetura Interna: A Vida de uma Execução
 
-- **Erro: "API Key environment variable not set"**:
-  - Você esqueceu de configurar o arquivo `.env` ou esqueceu de reiniciar o servidor após salvar o arquivo.
+Para os famintos por conhecimento de base arquitetural, eis o fluxo de vida do dado dentro do LangGraph (`src/agents/workflow.py` e `src/agents/react_core.py`):
 
-- **Erro: "Module not found"**:
-  - Você esqueceu de rodar `pip install -r requirements.txt`.
-
-- **A interface não abre**:
-  - Verifique se o terminal está aberto e rodando o comando `python src/server.py` sem erros.
+1. **`Scanner Node`**: Recebe o path inicial. Faz varredura de S.O. (os.walk) levantando metadados de até mil arquivos.
+2. **`Planner Node`**: Atua como o Arquiteto Pai. Filtra dependências de sistema (`node_modules`, `venv`) e seleciona estritamente os arquivos relevantes aos fluxos de negócio. Transforma a lista de arquivos estruturada num plano de execução tático.
+3. **`Reader Node`**: Abre I/O no disco e lê o código-fonte fisicamente. Em paralelo, orquestra consultas à Base Vetorial (ChromaDB) caso a flag `--domain` seja acionada, misturando AST de código com heurísticas corporativas.
+4. **`Writer Node`**: Um mini Map-Reduce interno. Fatia o contexto em pedaços e roda N instâncias simultâneas de sub-LLMs para gerar rascunhos em paralelo. Uma instância "Master" junta os pedaços num markdown coeso, formatado, e com injeção de diagramas de fluxo de dados.
+5. **`Critic Node`**: Dispara uma bateria estruturada com a engine `PraisonAI`. Instancia 1 `Section_Critic` e 1 `Lead_Critic`. O Lead consolida notas (0 a 10). Se a nota base for `< 8.0` ou se as seções de *Tradeoffs*, *Limites* e *Arquitetura* estiverem superficiais, a documentação falha (Return: `Approved=False`).
+6. **`Loop (Ciclo de Vida)`**: O sistema roteia de volta para as ferramentas de geração caso o Crítico descarte o material, perpetuando iterações até o esgotamento do limite máximo.
 
 ---
-*Desenvolvido como parte do estudo de Agentes de IA Autônomos.*
+
+## 🤝 Contribuindo
+
+Se você é estudante, sinta-se à vontade para ler os códigos em `src/agents/specialized/` para aprender como os Prompts de IA são construídos profissionalmente!
+
+Se você é Sênior e quiser incluir provedores Groq/Ollama/Anthropic nativos, pull requests são mais que bem-vindos.
+
+*"Documentação não precisa ser dolorosa. Ela só precisa ser delegada para quem não dorme."* 🦾
