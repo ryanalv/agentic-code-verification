@@ -42,12 +42,12 @@ A IA não faz tudo de uma vez. Ela foi construída usando o padrão **Grafos de 
 
 ```mermaid
 graph TD
-    A[Usuário Pede Documentação] --> B(Agente Planner)
-    B --> C(Agente Reader + RAG)
-    C --> D{Agente Writer (Map-Reduce)}
-    D --> E(Agente Critic)
-    E -- Trabalho Ruim / Reprova --> D
-    E -- Aprovado --> F[Doc Final.md Gerada!]
+    A["Usuário Pede Documentação"] --> B("Agente Planner")
+    B --> C("Agente Reader + RAG")
+    C --> D{"Agente Writer (Map-Reduce)"}
+    D --> E("Agente Critic")
+    E -- "Trabalho Ruim / Reprova" --> D
+    E -- "Aprovado" --> F["Doc Final.md Gerada!"]
 ```
 
 ---
