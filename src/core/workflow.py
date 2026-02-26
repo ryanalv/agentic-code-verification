@@ -1,3 +1,4 @@
+# workflow.py - Orquestrador principal que gerencia o fluxo de execução entre os agentes especializados e o estado do sistema.
 from src.core.state import AgentState
 from src.agents.specialized.scanner import scanner_node
 from src.agents.specialized.planner import planner_node
@@ -15,11 +16,12 @@ class AgentWorkflow:
         self.max_iterations = max_iterations
         self.critic_agent = CriticAgent()
         
-    def run(self, project_path: str, user_query: str) -> dict:
+    def run(self, project_path: str, user_query: str, domain_knowledge_path: str = None) -> dict:
         # 1. Inicializa o Estado
         state: AgentState = {
             "project_path": project_path,
             "user_query": user_query,
+            "domain_knowledge_path": domain_knowledge_path,
             "file_structure": None,
             "files_context": None,
             "reading_plan": [],
@@ -60,11 +62,13 @@ class AgentWorkflow:
                 return state
             else:
                 logger.info(f">>> Documentação REPROVADA. Score: {review.get('score')} <<<")
-                feedback = review.get("feedback", "Sem feedback.")
-                hallucinations = review.get("hallucinations", [])
+                old_feedback = state.get("critique_feedback") or ""
+                feedback = review.get('feedback', 'Sem feedback')
+                hallucinations = review.get('hallucinations', 'Nenhuma alucinação detectada')
+                new_feedback = f"\n[ITERAÇÃO {state['iteration'] + 1}]:\nCRÍTICA: {feedback}\nALUCINAÇÕES DETECTADAS: {hallucinations}\n"
+                state["critique_feedback"] = old_feedback + new_feedback
                 
-                state["critique_feedback"] = f"CRÍTICA: {feedback}\nALUCINAÇÕES DETECTADAS: {hallucinations}"
-                state["steps"].append(f"Critic: Reprovado na iteração {state['iteration']}. Feedback anexado.")
+                state["steps"].append(f"Critic: Reprovado na iteração {state['iteration'] + 1}. Feedback adicionado ao histórico.")
                 state["iteration"] += 1
                 
         # Se esgotou as tentativas, retorna o último rascunho com aviso

@@ -8,7 +8,7 @@ class RecursiveAgent(ReActAgent):
     Baseado na arquitetura RLM onde o agente gerencia seu próprio contexto e pode
     dividir problemas complexos em sub-problemas hierárquicos.
     """
-    def __init__(self, tools=None, model="gpt-4o", depth=0, max_depth=3):
+    def __init__(self, tools=None, model="moonshotai/kimi-k2.5", depth=0, max_depth=3):
         super().__init__(tools, model)
         self.depth = depth
         self.max_depth = max_depth

@@ -1,4 +1,4 @@
-# Agente responsável por revisar a documentação gerada, verificar alucinações e atribuir nota de qualidade.
+# critic.py - Agente responsável por revisar a documentação gerada e verificar alucinações.
 # Refatorado para usar Arquitetura Hierárquica (Map-Reduce) com PraisonAI
 from typing import Dict, List, Any, Optional
 import os
@@ -60,8 +60,8 @@ class CriticAgent:
             os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
             
         # Modelos configuráveis via ENV ou hardcoded para este exemplo
-        self.worker_model = "gpt-4o-mini" # Rápido e barato para leitura de volume
-        self.manager_model = "gpt-4o"     # Inteligente para decisão final
+        self.worker_model = "openai/gpt-5.1" # Rápido e barato para leitura de volume
+        self.manager_model = "moonshotai/kimi-k2.5"     # Inteligente para decisão final
         logger.info("CriticAgent Hierárquico (PraisonAI) inicializado.")
 
     def review(self, analyst_output: str, project_path: str) -> Dict[str, Any]:
@@ -73,6 +73,7 @@ class CriticAgent:
         """
         logger.info("Iniciando revisão hierárquica...")
         
+
         # 1. Split da Documentação
         sections = split_markdown_by_headers(analyst_output)
         logger.info(f"Documentação dividida em {len(sections)} seções para análise.")

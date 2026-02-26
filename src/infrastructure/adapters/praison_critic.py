@@ -55,15 +55,21 @@ class PraisonCriticAdapter(ICriticAgent):
     Adapter que implementa a interface ICriticAgent usando a biblioteca PraisonAI (Hierárquica).
     """
     
-    def __init__(self, worker_model="openai/gpt-4o-mini", manager_model="openai/gpt-4o"):
-        # Configuração automática para OpenRouter se disponível
-        if not os.getenv("OPENAI_API_KEY") and os.getenv("OPENROUTER_API_KEY"):
-            os.environ["OPENAI_API_KEY"] = os.getenv("OPENROUTER_API_KEY")
-            os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
-            logger.info("Configurado OpenRouter como provedor LLM para PraisonAI.")
+    def __init__(self, worker_model="gpt-5.1", manager_model="kimi-thinking-2.5"):
+        # Configuração para Azure OpenAI via LiteLLM (usado pelo PraisonAI)
+        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+        api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+        deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4.1-2").strip('"')
+        
+        if api_key and azure_endpoint:
+            os.environ["AZURE_API_KEY"] = api_key
+            os.environ["AZURE_API_BASE"] = azure_endpoint
+            os.environ["AZURE_API_VERSION"] = api_version
+            logger.info("Configurado Azure OpenAI como provedor LLM para PraisonAI.")
 
-        self.worker_model = worker_model
-        self.manager_model = manager_model
+        self.worker_model = f"azure/{deployment_name}"
+        self.manager_model = f"azure/{deployment_name}"
         logger.info("Adapter PraisonCritic inicializado.")
 
     def review(self, documentation: str, project_path: str) -> ReviewResult:
@@ -89,18 +95,22 @@ class PraisonCriticAdapter(ICriticAgent):
             llm=self.manager_model,
             instructions=f"""
             Review the feedback provided.
-            1. Calculate an overall score (0-10) based on the quality and accuracy of the documentation.
+            1. Calculate an overall score (0-10) based on the depth, technical clarity, and presence of Theoretical Context.
             2. Identify all unique missing files (hallucinations) reported by the Section Critic.
-            3. If there are any hallucinations or the overall score is less than 7.0, the documentation is NOT approved.
-            4. Provide detailed feedback on areas for improvement and specific quality issues.
+            3. Evaluate the Visual Diagrams. The documentation MUST contain at least one ASCII table mapping the System Architecture or Data Flow. If there are no ASCII tables representing architecture, or if they are too simplistic, the score MUST be reduced drastically.
+            4. If the documentation feels superficial, lacks deep technical analysis, lacks HIGH-QUALITY ASCII tables, contains hallucinations, or the score is less than 8.0, it MUST NOT be approved (set "approved": false).
+            5. Provide highly specific, actionable feedback on what exactly needs to be expanded or fixed. Analyze the documentation exhaustively. Liste tudo que está superficial. Expanda cada ponto superficial com exigências de profundidade técnica.
             
-            Output a FINAL JSON object with the following structure:
+            Output a FINAL JSON object with the following structure EXACTLY:
             {{
                 "approved": bool,
                 "score": float,
-                "feedback": "detailed feedback string",
+                "feedback": "detailed feedback string. Expand each superficial point here with technical depth.",
                 "hallucinations": ["list of unique missing files"],
-                "quality_feedback": "specific quality issues feedback string"
+                "quality_feedback": "specific quality issues feedback string",
+                "profundidade": float (0.0 to 1.0),
+                "superficial_sections": ["list of section numbers/names that are superficial"],
+                "missing_topics": ["error handling", "edge cases", etc]
             }}
             Ensure all keys are double-quoted. Do not use markdown code blocks for the final JSON.
             """
@@ -142,7 +152,7 @@ class PraisonCriticAdapter(ICriticAgent):
             Ler todos os relatórios das seções.
             1. Calcular média global.
             2. Listar TODAS alucinações únicas.
-            3. Se houver alucinação ou nota < 7, approved = False.
+            3. Avaliar profundamente se a documentação possui riqueza técnica e contexto teórico. Se faltar profundidade ou nota < 8, approved = False.
             
             SAÍDA FINAL: JSON único com:
             {{ "approved": bool, "score": float, "feedback": "str", "hallucinations": [], "quality_feedback": "str" }}
@@ -205,7 +215,7 @@ class PraisonCriticAdapter(ICriticAgent):
             
             if data:
                 return ReviewResult(
-                    approved=data.get('score', 0) >= 8.0, # Critério de aprovação
+                    approved=bool(data.get('approved', False)), # Respeitar a avaliação rigorosa do próprio agente
                     score=data.get('score', 0),
                     feedback=data.get('feedback', ''),
                     hallucinations=data.get('hallucinations', []),

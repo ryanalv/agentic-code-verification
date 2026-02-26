@@ -8,21 +8,25 @@ from src.config import settings
 from src.utils.logger import logger, add_tokens, set_step
 
 class ReActAgent:
-    def __init__(self, model_name: str = "openai/gpt-4o-mini", tools: Dict[str, Callable] = None):
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        if not api_key:
-             # Se não houver chave, deixamos falhar apenas ao tentar chamar o LLM, 
-             # ou permitimos se o objetivo for simulação.
-             # Para correção imediata do crash na inicialização:
+    def __init__(self, model_name: str = "openai/gpt-5.1", tools: Dict[str, Callable] = None):
+        from openai import AzureOpenAI
+        
+        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+        api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+        deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4.1-2").strip('"')
+
+        if not api_key or not azure_endpoint:
              pass 
         
-        logger.debug(f"Loaded API Key: {api_key[:10]}...")
+        logger.debug(f"Loaded Azure API Key: {str(api_key)[:10]}...")
         
-        self.client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
+        self.client = AzureOpenAI(
             api_key=api_key,
+            api_version=api_version,
+            azure_endpoint=azure_endpoint
         )
-        self.model_name = model_name
+        self.model_name = deployment_name
         self.tools = tools or {}
         self.max_steps = 50  # Aumentados os passos para permitir análise exaustiva e leitura de muitos arquivos
         

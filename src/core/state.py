@@ -12,8 +12,10 @@ class AgentState(TypedDict):
     user_query: str
     
     # --- Contexto do Projeto ---
+    domain_knowledge_path: Optional[str] # Caminho opcional para conhecimentos de domínio adicionais
     file_structure: Optional[str]      # Saída do Scanner: Mapa do projeto
-    files_context: Optional[str]       # Saída do Reader: Conteúdo lido dos arquivos
+    files_context: Optional[str]       # Saída do Reader: Conteúdo lido dos arquivos completos
+    rag_context: Optional[str]         # Contexto recuperado pelo sistema RAG
     
     # --- Planejamento ---
     reading_plan: Optional[List[str]]  # Saída do Planner: Lista de arquivos a ler

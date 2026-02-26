@@ -323,10 +323,13 @@
                     addLog(data.message, 'text-orange-400');
                 } else if (data.type === 'success') {
                     addLog(data.message, 'text-green-400 font-bold');
-                } else if (data.type === 'final_doc') {
-                    docPreview.innerText = data.content;
-                    finalMarkdownContent = data.content;
-                    downloadBtn.classList.remove('hidden');
+                } else if (data.type === 'final_doc_chunk') {
+                    finalMarkdownContent += data.content;
+                    if (data.is_last) {
+                        docPreview.innerText = finalMarkdownContent;
+                        downloadBtn.classList.remove('hidden');
+                        addLog("Documentação final renderizada com sucesso no navegador.", 'text-green-400');
+                    }
                 }
             };
 
