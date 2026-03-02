@@ -29,7 +29,7 @@ Aqui, nós juntamos duas tecnologias incríveis:
 
 ---
 
-## ✨ Como a Mágica Acontece? (Fluxo de Trabalho)
+## Fluxo de Trabalho
 
 A IA não faz tudo de uma vez. Ela foi construída usando o padrão **Grafos de Estado** (State Machines). O fluxo de trabalho funciona na seguinte ordem:
 
